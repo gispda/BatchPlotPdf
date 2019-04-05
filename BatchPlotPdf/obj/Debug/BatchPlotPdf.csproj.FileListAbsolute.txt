@@ -1,0 +1,12 @@
+F:\project\BatchPlotPdf\BatchPlotPdf\obj\Debug\BatchPlotPdf.csproj.GenerateResource.Cache
+F:\project\BatchPlotPdf\BatchPlotPdf\obj\Debug\BatchPlotPdf.BatchPlotCommands.resources
+F:\project\BatchPlotPdf\BatchPlotPdf\bin\Debug\BatchPlotPdf.dll
+F:\project\BatchPlotPdf\BatchPlotPdf\bin\Debug\BatchPlotPdf.pdb
+F:\project\BatchPlotPdf\BatchPlotPdf\bin\Debug\AcDx.dll
+F:\project\BatchPlotPdf\BatchPlotPdf\bin\Debug\AcMr.dll
+F:\project\BatchPlotPdf\BatchPlotPdf\bin\Debug\log4net.dll
+F:\project\BatchPlotPdf\BatchPlotPdf\bin\Debug\log4net.pdb
+F:\project\BatchPlotPdf\BatchPlotPdf\bin\Debug\log4net.xml
+F:\project\BatchPlotPdf\BatchPlotPdf\obj\Debug\BatchPlotPdf.dll
+F:\project\BatchPlotPdf\BatchPlotPdf\obj\Debug\BatchPlotPdf.pdb
+F:\project\BatchPlotPdf\BatchPlotPdf\obj\Debug\BatchPlotPdf.csprojResolveAssemblyReference.cache
