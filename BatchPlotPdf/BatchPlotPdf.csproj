@@ -10,7 +10,7 @@
     <ProjectGuid>{0481C599-AEC3-4F6B-AC95-152B1FFA9DBD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BatchPlotPdf</RootNamespace>
+    <RootNamespace>HomeDesignCad.Plot</RootNamespace>
     <AssemblyName>BatchPlotPdf</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -137,17 +137,28 @@
     <None Include="Util\log4net.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BatchPlotCommand.cs" />
+    <Compile Include="Cmd\BatchPlotCommand.cs" />
+    <Compile Include="Cmd\BatchPlotCommand.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BatchPlotCommand.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Dialog\BatchPlotForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Util\Log4NetHelper.cs" />
     <Compile Include="PlotRegionToPDF.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\SysUtil.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="BatchPlotCommand.resx">
+    <EmbeddedResource Include="Cmd\BatchPlotCommand.resx">
       <DependentUpon>BatchPlotCommand.cs</DependentUpon>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>BatchPlotCommand.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialog\BatchPlotForm.resx">
+      <DependentUpon>BatchPlotForm.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

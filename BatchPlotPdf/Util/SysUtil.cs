@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BatchPlotPdf.Util
+namespace HomeDesignCad.Plot.Util
 {
     class SysUtil
     {

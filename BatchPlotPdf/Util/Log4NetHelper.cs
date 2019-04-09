@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 
-namespace BatchPlotPdf.Util
+namespace HomeDesignCad.Plot.Util
 {
     public class Log4NetHelper
     {

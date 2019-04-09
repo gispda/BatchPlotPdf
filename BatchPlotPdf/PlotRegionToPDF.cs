@@ -22,9 +22,9 @@ using Us = Autodesk.AutoCAD.DatabaseServices.SymbolUtilityServices;
 using Br = Autodesk.AutoCAD.BoundaryRepresentation;
 using Pt = Autodesk.AutoCAD.PlottingServices;
 
-[assembly: Rt.CommandClass(typeof(BatchPlotPdf.PlotRegionToPDF))]
+[assembly: Rt.CommandClass(typeof(HomeDesignCad.Plot.PlotRegionToPDF))]
 
-namespace BatchPlotPdf
+namespace HomeDesignCad.Plot
 {
 
     public static class PlotRegionToPDF

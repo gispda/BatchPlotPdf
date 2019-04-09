@@ -22,12 +22,12 @@ using Br = Autodesk.AutoCAD.BoundaryRepresentation;
 using Pt = Autodesk.AutoCAD.PlottingServices;
 
 using Autodesk.AutoCAD.PlottingServices;
-using BatchPlotPdf.Util;
+using HomeDesignCad.Plot.Util;
 
 // This line is not mandatory, but improves loading                                                                                                                                                                performances
-[assembly: CommandClass(typeof(BatchPlotPdf.BatchPlotCommands))]
+[assembly: CommandClass(typeof(HomeDesignCad.Plot.Cmd.BatchPlotCommands))]
 
-namespace BatchPlotPdf
+namespace HomeDesignCad.Plot.Cmd
 {
     // This class is instantiated by AutoCAD for each document when
     // a command is called by the user the first time in the context
@@ -97,36 +97,11 @@ namespace BatchPlotPdf
         [CommandMethod("BPlotGroup", "Baplot", "BpCommandLocal", CommandFlags.Modal| CommandFlags.UsePickSet)]
         public void RunBatchPlot() // This method can have any name
         {
-            //Editor ed = Application.DocumentManager.MdiActiveDocument.Editor;
-            //PromptPointOptions ptopts = new PromptPointOptions("选择打印窗体区域左上角点");
-            //ptopts.BasePoint = new Point3d(1, 1, 1);
-            //ptopts.UseDashedLine = true;
-            //ptopts.Message = "选择打印窗体区域左上角点";
-
-            //ed.PromptingForPoint += new PromptPointOptionsEventHandler(handle_promptPointOptions);
-            //ed.PromptedForPoint += new PromptPointResultEventHandler(handle_promptPointResult);
-            //PromptPointResult ptRes = ed.GetPoint(ptopts);
-            //ed.PromptingForPoint -= new PromptPointOptionsEventHandler(handle_promptPointOptions);
-            //ed.PromptedForPoint -= new PromptPointResultEventHandler(handle_promptPointResult);
-
-
-            //Point3d start = ptRes.Value;
-            //if (ptRes.Status == PromptStatus.Cancel)
-            //{
-            //    ed.WriteMessage("将 (0,0,0) 作为打印窗体区域左上角点");
-            //}
-
-            //ptopts.Message = "选择打印窗体区域右下角";
-            //ptRes = ed.GetPoint(ptopts);
-            //Point3d end = ptRes.Value;
-            //if (ptRes.Status == PromptStatus.Cancel)
-            //{
-            //    ed.WriteMessage("将 (0,0,0) 作为打印窗体区域右下角");
-            //}
+          
 
 
 
-            plottoPdfUseWindows();
+           // plottoPdfUseWindows();
         }
 
 
