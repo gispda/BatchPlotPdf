@@ -6,6 +6,7 @@ using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 using Autodesk.AutoCAD.EditorInput;
+using BatchPlotPdf.Util;
 
 // This line is not mandatory, but improves loading performances
 [assembly: ExtensionApplication(typeof(BatchPlotPdf.BatchPlotPlugin))]
@@ -39,6 +40,8 @@ namespace BatchPlotPdf
             // as well as some of the existing AutoCAD managed apps.
 
             // Initialize your plug-in application here
+
+            
         }
 
         void IExtensionApplication.Terminate()
