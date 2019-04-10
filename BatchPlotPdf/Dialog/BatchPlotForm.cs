@@ -1,20 +1,8 @@
-/*
- * Created by SharpDevelop.
- * User: Tim Willey
- * Date: 2/22/2007
- * v2.0 6/26/07 - Added the option to add a plot stamp, adds information to a title block, or plan text if not found.
- *  Added the ability to select tabs to plot (Layout1, All paper space tabs, or current tab).
- * v2.1 6/29/07 - Added the option to grab the current layout's settings to fill out the form, and the plot to file option.
- * v2.2 7/02/07 - Added the the options to supply the linetype scales (model and paper space), and the ability to turn on
- *   all viewports when plotting.  Also change the format of the dialog (added a tab control).
- * v2.3 7/03/07 - Added the options to select the layouts to plot (per drawing, from a treeview)
- * v2.4 3/28/14 - Modified by Robbo to plot to metric (mm) sizes and other general tweaks to suit personal requirements.
- */
-
 using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+
 using System.Collections;
 using System.Collections.Specialized;
 using System.IO;
@@ -29,8 +17,9 @@ using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.Windows;
 using Autodesk.AutoCAD.Interop.Common;
 
-using AcadApp = Autodesk.AutoCAD.ApplicationServices.Application;
+using cad = Autodesk.AutoCAD.ApplicationServices.Application;
 using PCM = Autodesk.AutoCAD.PlottingServices.PlotConfigManager;
+using HomeDesignCad.Plot.Util;
 
 [assembly: CommandClass(typeof(HomeDesignCad.Plot.Dialog.BatchPlotForm))]
 
@@ -995,8 +984,8 @@ namespace HomeDesignCad.Plot.Dialog
 		}
 				
 		public void MyPlottingPart (HdCadPlotParams PltParams, bool IsModel) {
-			object OldBkGdPlt = AcadApp.GetSystemVariable("BackGroundPlot");
-			AcadApp.SetSystemVariable("BackGroundPlot", 0);
+			object OldBkGdPlt = cad.GetSystemVariable("BackGroundPlot");
+			cad.SetSystemVariable("BackGroundPlot", 0);
 			Database db = HostApplicationServices.WorkingDatabase;
 			PlotInfo PltInfo = new PlotInfo();
 			PltInfo.Layout = LayoutManager.Current.GetLayoutId(LayoutManager.Current.CurrentLayout);
@@ -1046,7 +1035,7 @@ namespace HomeDesignCad.Plot.Dialog
 			}
 			PltPrgDia.Destroy();
 			PltEng.Destroy();
-			AcadApp.SetSystemVariable("BackGroundPlot", OldBkGdPlt);
+			cad.SetSystemVariable("BackGroundPlot", OldBkGdPlt);
 		}
 		
 		[CommandMethod("MyBPlot", CommandFlags.Session)]
@@ -1057,7 +1046,7 @@ namespace HomeDesignCad.Plot.Dialog
 			}
 			if (DiaRslt == DialogResult.OK) {
 				Document tempDoc = null;
-				DocumentCollection DocCol = AcadApp.DocumentManager;
+				DocumentCollection DocCol = cad.DocumentManager;
 				foreach (HdCadPlotParams mpp in PlotObjectsArray) {
 					if (mpp != null) {
 						try {
@@ -1166,10 +1155,10 @@ namespace HomeDesignCad.Plot.Dialog
 				TextObj.TextString = PlotDate + " - IRR -" + db.Filename;
 				TextObj.HorizontalMode = TextHorizontalMode.TextRight;
 			    TextObj.VerticalMode = TextVerticalMode.TextTop;
-				Point3d MinPt = (Point3d)AcadApp.GetSystemVariable("ExtMin");
-				Point3d MaxPt = (Point3d)AcadApp.GetSystemVariable("ExtMax");
+				Point3d MinPt = (Point3d)cad.GetSystemVariable("ExtMin");
+				Point3d MaxPt = (Point3d)cad.GetSystemVariable("ExtMax");
 				TextObj.AlignmentPoint = new Point3d(MaxPt.X, MinPt.Y, MinPt.X);
-				double TxtHt = (2.5) * (double)AcadApp.GetSystemVariable("DimScale");
+				double TxtHt = (2.5) * (double)cad.GetSystemVariable("DimScale");
 				if (TxtHt.Equals(0.0)) TxtHt = 2.5;
 				TextObj.Height = TxtHt;
 				BlkTblRec.UpgradeOpen();
@@ -1327,14 +1316,14 @@ namespace HomeDesignCad.Plot.Dialog
 		private bool CheckSpaceSetLtScale (string LoName, HdCadPlotParams mpp) {
 			if (string.Compare("Model", LoName) == 0) {
 				if (mpp.ChangeLinetypeScale) {
-					AcadApp.SetSystemVariable("PsLtScale", 1);
-					AcadApp.SetSystemVariable("LtScale", mpp.LinetypeScaleModel);
+					cad.SetSystemVariable("PsLtScale", 1);
+					cad.SetSystemVariable("LtScale", mpp.LinetypeScaleModel);
 				}
 				return true;
 			}
 			else {
 				if (mpp.ChangeLinetypeScale) {
-					AcadApp.SetSystemVariable("LtScale", mpp.LinetypeScalePaper);
+					cad.SetSystemVariable("LtScale", mpp.LinetypeScalePaper);
 				}
 				return false;
 			}
@@ -1352,10 +1341,87 @@ namespace HomeDesignCad.Plot.Dialog
         private void btnPickdrawing_Click(object sender, EventArgs e)
         {
 
-            //double length = 0;
+            Document doc =
 
-            //var ed = AcAp.DocumentManager.MdiActiveDocument.Editor;
-            //using (var eduserinteraction = ed.StartUserInteraction(handle))
+                cad.DocumentManager.MdiActiveDocument;
+
+            Editor ed = doc.Editor;
+
+            Database db = doc.Database;
+
+
+            Transaction tr =
+
+              db.TransactionManager.StartTransaction();     
+
+            //var ed = cad.DocumentManager.MdiActiveDocument.Editor;
+            using (var eduserinteraction = ed.StartUserInteraction(this.Handle))
+            {
+                string blockName = "k1";
+                TypedValue[] tvs = new TypedValue[] { new TypedValue(0, "INSERT"), new TypedValue(2, blockName) };
+                SelectionFilter sf = new SelectionFilter(tvs);
+
+                using (tr)
+                {
+                    try
+                    {
+                        PromptPointOptions ppo = new PromptPointOptions("\n\tSpecify a first corner: ");
+                        PromptPointResult ppr = ed.GetPoint(ppo);
+                        if (ppr.Status != PromptStatus.OK) return;
+                        PromptCornerOptions pco = new PromptCornerOptions("\n\tOther corner: ", ppr.Value);
+                        PromptPointResult pcr = ed.GetCorner(pco);
+                        if (pcr.Status != PromptStatus.OK) return;
+                        Point3d pt1 = ppr.Value;
+                        Point3d pt2 = pcr.Value;
+                        if (pt1.X == pt2.X || pt1.Y == pt2.Y)
+                        {
+                            ed.WriteMessage("\nInvalid point specification");
+                            return;
+                        }
+
+                        PromptSelectionResult res;
+                        res = ed.SelectWindow(pt1, pt2, sf);
+                        Log4NetHelper.WriteInfoLog("pt1 pt2位置\n");
+                        Log4NetHelper.WriteInfoLog(pt1 + "\n");
+                        Log4NetHelper.WriteInfoLog(pt2 + "\n");
+                        if (res.Status != PromptStatus.OK)
+                            return;
+                        SelectionSet sset = res.Value;
+                        if (sset.Count == 0)
+                            return;
+                        BlockReference br = null;
+                        foreach (SelectedObject obj in sset)
+                        {
+                            // ed.WriteMessage("\nhas data");
+                            br = GetBlockReference(obj, tr);
+                            //Log4NetHelper.WriteInfoLog(br.BlockName + "\n");
+                            //Log4NetHelper.WriteInfoLog(br.Name+"\n");
+                            //Log4NetHelper.WriteInfoLog(br.Bounds + "\n");
+                            //Log4NetHelper.WriteInfoLog(br.Position + "\n");
+                            //Log4NetHelper.WriteInfoLog(br.BlockTransform + "\n");
+                            //Log4NetHelper.WriteInfoLog(br.BlockUnit + "\n");
+                            //Log4NetHelper.WriteInfoLog("***********************\n");
+                            //Log4NetHelper.WriteInfoLog(br.GeometricExtents.MinPoint + "\n");
+                            //Log4NetHelper.WriteInfoLog("66666666666666666666666666\n");
+                            //Log4NetHelper.WriteInfoLog(br.GeometricExtents.MaxPoint + "\n");
+                            //Log4NetHelper.WriteInfoLog("***********************\n");
+                            //Log4NetHelper.WriteInfoLog("-----------------------------\n");
+                            //PlotOnePaper(db, doc, br, "DWG To PDF.pc3",
+                     // "ISO_A4_(210.00_x_297.00_MM)", "111.pdf");
+
+
+                        }
+                    }
+                    catch (System.Exception ex)
+                    {
+                        ed.WriteMessage(ex.Message + "\n" + ex.StackTrace);
+                    }
+                }
+            
+            
+            }
+            cad.MainWindow.Focus();
+
             //{
 
             //    PromptDistanceOptions opt1 = new PromptDistanceOptions("量取高度：");
@@ -1375,8 +1441,18 @@ namespace HomeDesignCad.Plot.Dialog
 
 
         }
+
+        private BlockReference GetBlockReference(SelectedObject obj, Transaction tr)
+        {
+            BlockReference br = null;
+            br = (BlockReference)tr.GetObject(obj.ObjectId, OpenMode.ForRead);
+
+            return br;
+        }
 		
 	}
+
+
 
     /// <summary>
     /// Description of MyPlot.

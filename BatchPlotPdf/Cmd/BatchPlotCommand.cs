@@ -21,8 +21,10 @@ using Us = Autodesk.AutoCAD.DatabaseServices.SymbolUtilityServices;
 using Br = Autodesk.AutoCAD.BoundaryRepresentation;
 using Pt = Autodesk.AutoCAD.PlottingServices;
 
+
 using Autodesk.AutoCAD.PlottingServices;
 using HomeDesignCad.Plot.Util;
+using HomeDesignCad.Plot.Dialog;
 
 // This line is not mandatory, but improves loading                                                                                                                                                                performances
 [assembly: CommandClass(typeof(HomeDesignCad.Plot.Cmd.BatchPlotCommands))]
@@ -97,9 +99,10 @@ namespace HomeDesignCad.Plot.Cmd
         [CommandMethod("BPlotGroup", "Baplot", "BpCommandLocal", CommandFlags.Modal| CommandFlags.UsePickSet)]
         public void RunBatchPlot() // This method can have any name
         {
-          
+            BatchPlotForm batchplotform = new BatchPlotForm();
+            cad.ShowModalDialog(batchplotform);
 
-
+            
 
            // plottoPdfUseWindows();
         }
