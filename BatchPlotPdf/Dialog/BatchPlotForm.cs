@@ -999,12 +999,23 @@ namespace HomeDesignCad.Plot.Dialog
 			PlotConfig pc = PCM.SetCurrentConfig(PltParams.Device);
 			try {
 				PltSetVald.SetPlotConfigurationName(PltSet, PltParams.Device, PltParams.CanonicalPaper);
+                /////////////////
+
 				PltSetVald.RefreshLists(PltSet);
+
 				PltSetVald.SetCurrentStyleSheet(PltSet, PltParams.ctbFile);
+
+
 				PltSetVald.SetPlotOrigin(PltSet, new Point2d(0.0, 0.0));
 				PltSetVald.SetPlotPaperUnits(PltSet, PlotPaperUnit.Millimeters);
+                PltSetVald.SetPlotType(PltSet, Autodesk.AutoCAD.DatabaseServices.PlotType.Extents);
+
+                //////////////////////////////////////////////
+
 				PltSetVald.SetPlotRotation(PltSet, PltParams.AcPlotRotation);
-				PltSetVald.SetPlotType(PltSet, Autodesk.AutoCAD.DatabaseServices.PlotType.Extents);
+
+
+
 				PltSetVald.SetUseStandardScale(PltSet, true);
 				PltSetVald.SetStdScaleType(PltSet, PltParams.AcScaleType);
                 PltSetVald.SetPlotCentered(PltSet, true);
@@ -1498,7 +1509,9 @@ namespace HomeDesignCad.Plot.Dialog
             get { return DwgPath; }
             set { DwgPath = value; }
         }
-
+        /// <summary>
+        /// DWG To PDF.pc3  打印设备文件
+        /// </summary>
         public string Device
         {
             get { return DeviceName; }
@@ -1540,7 +1553,9 @@ namespace HomeDesignCad.Plot.Dialog
             get { return PltRot; }
             set { PltRot = value; }
         }
-
+        /// <summary>
+        /// ISO_A4_(210.00_x_297.00_MM)  打印纸张定义
+        /// </summary>
         public string CanonicalPaper
         {
             get { return CanonicalPaperName; }
@@ -1558,13 +1573,17 @@ namespace HomeDesignCad.Plot.Dialog
             get { return ShouldStamp; }
             set { ShouldStamp = value; }
         }
-
+        /// <summary>
+        /// 是否打印到文件
+        /// </summary>
         public bool PlotToFile
         {
             get { return Plt2File; }
             set { Plt2File = value; }
         }
-
+        /// <summary>
+        /// 输出的pdf文件
+        /// </summary>
         public string PlotFileLocation
         {
             get { return PltFileName; }
