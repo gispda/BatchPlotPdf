@@ -80,6 +80,7 @@ namespace HomeDesignCad.Plot.Dialog
 		private static string GlbScale = "1:1";
 		private static string[] GlbCanonicalArray;
         private Button btnPickdrawing;
+        private TreeView tvpapers;
 		private string PlotDate = DateTime.Now.Date.ToShortDateString();
 		public BatchPlotForm()
 		{
@@ -144,6 +145,7 @@ namespace HomeDesignCad.Plot.Dialog
             this.RemoveSettingsBtn = new System.Windows.Forms.Button();
             this.CpCurSettingsBtn = new System.Windows.Forms.Button();
             this.btnPickdrawing = new System.Windows.Forms.Button();
+            this.tvpapers = new System.Windows.Forms.TreeView();
             this.MiscTab.SuspendLayout();
             this.LtScGrp.SuspendLayout();
             this.PlotTabs.SuspendLayout();
@@ -685,6 +687,13 @@ namespace HomeDesignCad.Plot.Dialog
             this.btnPickdrawing.UseVisualStyleBackColor = false;
             this.btnPickdrawing.Click += new System.EventHandler(this.btnPickdrawing_Click);
             // 
+            // tvpapers
+            // 
+            this.tvpapers.Location = new System.Drawing.Point(0, 0);
+            this.tvpapers.Name = "tvpapers";
+            this.tvpapers.Size = new System.Drawing.Size(305, 442);
+            this.tvpapers.TabIndex = 11;
+            // 
             // BatchPlotForm
             // 
             this.AcceptButton = this.PlotBtn;
@@ -692,6 +701,7 @@ namespace HomeDesignCad.Plot.Dialog
             this.BackColor = System.Drawing.Color.SteelBlue;
             this.CancelButton = this.CancelBtn;
             this.ClientSize = new System.Drawing.Size(825, 436);
+            this.Controls.Add(this.tvpapers);
             this.Controls.Add(this.btnPickdrawing);
             this.Controls.Add(this.PlotTabs);
             this.Controls.Add(this.DrawingListView);
@@ -830,6 +840,7 @@ namespace HomeDesignCad.Plot.Dialog
 			ListView.ListViewItemCollection lvic = DrawingListView.Items;
 			PlotObjectsArray = new object[lvic.Count];
 			for (int i = 0; i < lvic.Count; ++i) {
+                Log4NetHelper.WriteInfoLog(lvic[i].Tag+"\n");
 				PlotObjectsArray[i] = lvic[i].Tag as HdCadPlotParams;
 			}
 			this.Close();
@@ -1057,24 +1068,36 @@ namespace HomeDesignCad.Plot.Dialog
 			}
 			if (DiaRslt == DialogResult.OK) {
 				Document tempDoc = null;
+                Log4NetHelper.WriteInfoLog("11111111111111111111111111\n");
 				DocumentCollection DocCol = cad.DocumentManager;
 				foreach (HdCadPlotParams mpp in PlotObjectsArray) {
+                    Log4NetHelper.WriteInfoLog("222222222222222222222222222\n");
 					if (mpp != null) {
 						try {
+                            Log4NetHelper.WriteInfoLog("33333333333333333333333\n");
 							tempDoc = DocCol.Open(mpp.DrawingPath, true);
+                            Log4NetHelper.WriteInfoLog("44444444444444444444444\n");
 							Database tempDb = tempDoc.Database;
 							LayoutManager tempLoMan = LayoutManager.Current;
 							using (DocumentLock DocLock = tempDoc.LockDocument()) {
+                                Log4NetHelper.WriteInfoLog("555555555555555555555555\n");
 								if (mpp.TurnOnViewports) TurnOnViewports(tempDoc, tempDb);
 								if (mpp.PlotCurrentLayout) {
 									if (mpp.ApplyStamp) AddPlotText(tempDb, tempLoMan.GetLayoutId(tempLoMan.CurrentLayout));
+                                    Log4NetHelper.WriteInfoLog("6666666666666666666666666666666\n");
 									MyPlottingPart(mpp, CheckSpaceSetLtScale(tempLoMan.CurrentLayout, mpp));
+                                    Log4NetHelper.WriteInfoLog("777777777777777777777777777777777\n");
 								}
 								else if (!mpp.LayoutsToPlot.Length.Equals(0)) {
+
+                                    Log4NetHelper.WriteInfoLog("8888888888888888888888888888\n");
 									foreach (string LoName in mpp.LayoutsToPlot) {
 										try {
+
+                                            Log4NetHelper.WriteInfoLog("9999999999999999999999999999999999999\n");
 											tempLoMan.CurrentLayout = LoName;
 											if (mpp.ApplyStamp) AddPlotText(tempDb, tempLoMan.GetLayoutId(tempLoMan.CurrentLayout));
+                                            Log4NetHelper.WriteInfoLog("000000000000000000000000000000000000000\n");
 											MyPlottingPart(mpp, CheckSpaceSetLtScale(LoName, mpp));
 										}
 										catch {}
@@ -1401,10 +1424,19 @@ namespace HomeDesignCad.Plot.Dialog
                         if (sset.Count == 0)
                             return;
                         BlockReference br = null;
+                        HdCadPlotParams hacadpp = null;
+
                         foreach (SelectedObject obj in sset)
                         {
                             // ed.WriteMessage("\nhas data");
                             br = GetBlockReference(obj, tr);
+                            hacadpp = new HdCadPlotParams();
+
+                            hacadpp.MinPt = br.GeometricExtents.MinPoint;
+                            //hacadpp.MinPt = br.GeometricExtents.MinPoint.Y * (1 - 0.0001);
+
+                            hacadpp.MaxPt = br.GeometricExtents.MaxPoint;
+
                             //Log4NetHelper.WriteInfoLog(br.BlockName + "\n");
                             //Log4NetHelper.WriteInfoLog(br.Name+"\n");
                             //Log4NetHelper.WriteInfoLog(br.Bounds + "\n");
@@ -1489,8 +1521,14 @@ namespace HomeDesignCad.Plot.Dialog
         private bool VpOn;
         private bool CurLtSc;
         private string[] LoNames;
+        private Point3d MinPoints;
+        private Point3d MaxPoints;
 
-        public HdCadPlotParams() { }
+
+        public HdCadPlotParams() {
+            this.MinPoints = new Point3d();
+            this.MaxPoints = new Point3d();
+        }
         public HdCadPlotParams(string DwgPath, string DeviceName, string PaperSize, string ctbName, bool ScLw, int Cnt, Autodesk.AutoCAD.DatabaseServices.StdScaleType ScTyp, Autodesk.AutoCAD.DatabaseServices.PlotRotation PltRot, string CanonicalMedia)
         {
             this.DwgPath = DwgPath;
@@ -1502,6 +1540,8 @@ namespace HomeDesignCad.Plot.Dialog
             this.ScTyp = ScTyp;
             this.PltRot = PltRot;
             this.CanonicalPaperName = CanonicalMedia;
+            this.MinPoints = new Point3d();
+            this.MaxPoints = new Point3d();
         }
 
         public string DrawingPath
@@ -1572,6 +1612,22 @@ namespace HomeDesignCad.Plot.Dialog
         {
             get { return ShouldStamp; }
             set { ShouldStamp = value; }
+        }
+        /// <summary>
+        /// 图框左下角坐标
+        /// </summary>
+        public Point3d MinPt
+        {
+            get { return MinPoints; }
+            set { MinPoints = value; }
+        }
+        /// <summary>
+        /// 图框右上角坐标
+        /// </summary>
+        public Point3d MaxPt
+        {
+            get { return MaxPoints; }
+            set { MaxPoints = value; }
         }
         /// <summary>
         /// 是否打印到文件
