@@ -88,7 +88,9 @@ namespace HomeDesignCad.Plot.Dialog
 			// The InitializeComponent() call is required for Windows Forms designer support.
 			//
 			InitializeComponent();
-			
+
+
+           
 			//
 			// TODO: Add constructor code after the InitializeComponent() call.
 			//
@@ -1425,6 +1427,8 @@ namespace HomeDesignCad.Plot.Dialog
                             return;
                         BlockReference br = null;
                         HdCadPlotParams hacadpp = null;
+
+                        PlotObjectsArray = new object[sset.Count];
 
                         foreach (SelectedObject obj in sset)
                         {
