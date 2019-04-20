@@ -99,12 +99,12 @@ namespace HomeDesignCad.Plot.Cmd
         [CommandMethod("BPlotGroup", "Baplot", "BpCommandLocal", CommandFlags.Modal| CommandFlags.UsePickSet)]
         public void RunBatchPlot() // This method can have any name
         {
-            BatchPlotForm batchplotform = new BatchPlotForm();
-            cad.ShowModalDialog(batchplotform);
+           // BatchPlotForm batchplotform = new BatchPlotForm();
+           // cad.ShowModalDialog(batchplotform);
 
             
 
-           // plottoPdfUseWindows();
+            plottoPdfUseWindows();
         }
 
 

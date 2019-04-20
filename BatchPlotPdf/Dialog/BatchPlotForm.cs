@@ -18,6 +18,8 @@ using Autodesk.AutoCAD.Windows;
 using Autodesk.AutoCAD.Interop.Common;
 
 using cad = Autodesk.AutoCAD.ApplicationServices.Application;
+using Db = Autodesk.AutoCAD.DatabaseServices;
+using Us = Autodesk.AutoCAD.DatabaseServices.SymbolUtilityServices;
 using PCM = Autodesk.AutoCAD.PlottingServices.PlotConfigManager;
 using HomeDesignCad.Plot.Util;
 
@@ -73,7 +75,7 @@ namespace HomeDesignCad.Plot.Dialog
 		private System.Windows.Forms.TabPage MiscTab;
 		private System.Windows.Forms.CheckBox LandscapeChkBox;
 		private static string[,] ScaleValueArray;
-		private static object[] PlotObjectsArray;
+        private static HdCadPlotParams[] PlotObjectsArray;
         private static string GlbDeviceName = "PDF-XChange Printer 2012.pc3";
 		private static string GlbPaper = "A1";
 		private static string GlbctbFile = "G-STANDARD.ctb";
@@ -840,11 +842,11 @@ namespace HomeDesignCad.Plot.Dialog
 			GlbctbFile = ctbFileComboBox.Text;
 			GlbScale = ScaleComboBox.Text;
 			ListView.ListViewItemCollection lvic = DrawingListView.Items;
-			PlotObjectsArray = new object[lvic.Count];
-			for (int i = 0; i < lvic.Count; ++i) {
-                Log4NetHelper.WriteInfoLog(lvic[i].Tag+"\n");
-				PlotObjectsArray[i] = lvic[i].Tag as HdCadPlotParams;
-			}
+            //PlotObjectsArray = new HdCadPlotParams[lvic.Count];
+            //for (int i = 0; i < lvic.Count; ++i) {
+            //    Log4NetHelper.WriteInfoLog(lvic[i].Tag+"\n");
+            //    PlotObjectsArray[i] = lvic[i].Tag as HdCadPlotParams;
+            //}
 			this.Close();
 		}
 		
@@ -995,7 +997,15 @@ namespace HomeDesignCad.Plot.Dialog
 			mic.Add(mi3);
 			mi3.Enabled = new EventHandler(ViewSettingsCtMenu) != null;
 		}
-				
+        private static Db.Layout GetCurrentLayout(Database db, Db.Transaction tr)
+        {
+            Db.ObjectId modelId = Us.GetBlockModelSpaceId(db);
+            Db.BlockTableRecord model = tr.GetObject(modelId,
+            Db.OpenMode.ForRead) as Db.BlockTableRecord;
+            Db.Layout layout = tr.GetObject(model.LayoutId,
+Db.OpenMode.ForRead) as Db.Layout;
+            return layout;
+        }		
 		public void MyPlottingPart (HdCadPlotParams PltParams, bool IsModel) {
 			object OldBkGdPlt = cad.GetSystemVariable("BackGroundPlot");
 			cad.SetSystemVariable("BackGroundPlot", 0);
@@ -1077,34 +1087,46 @@ namespace HomeDesignCad.Plot.Dialog
 					if (mpp != null) {
 						try {
                             Log4NetHelper.WriteInfoLog("33333333333333333333333\n");
-							tempDoc = DocCol.Open(mpp.DrawingPath, true);
+							//tempDoc = DocCol.Open(mpp.DrawingPath, true);
+                            tempDoc = GetActiveDoc();
+
+                            if(tempDoc==null)
                             Log4NetHelper.WriteInfoLog("44444444444444444444444\n");
-							Database tempDb = tempDoc.Database;
+                            else
+                                Log4NetHelper.WriteInfoLog("已经打开cad dwg file\n");
+                            Database tempDb = GetCurrentDb(tempDoc);
+
 							LayoutManager tempLoMan = LayoutManager.Current;
 							using (DocumentLock DocLock = tempDoc.LockDocument()) {
                                 Log4NetHelper.WriteInfoLog("555555555555555555555555\n");
-								if (mpp.TurnOnViewports) TurnOnViewports(tempDoc, tempDb);
-								if (mpp.PlotCurrentLayout) {
-									if (mpp.ApplyStamp) AddPlotText(tempDb, tempLoMan.GetLayoutId(tempLoMan.CurrentLayout));
+
+                                //if (mpp.ApplyStamp) AddPlotText(tempDb, tempLoMan.GetLayoutId(tempLoMan.CurrentLayout));
                                     Log4NetHelper.WriteInfoLog("6666666666666666666666666666666\n");
-									MyPlottingPart(mpp, CheckSpaceSetLtScale(tempLoMan.CurrentLayout, mpp));
+                                    MyPlottingPart(mpp, CheckSpaceSetLtScale(tempLoMan.CurrentLayout, mpp));
                                     Log4NetHelper.WriteInfoLog("777777777777777777777777777777777\n");
-								}
-								else if (!mpp.LayoutsToPlot.Length.Equals(0)) {
 
-                                    Log4NetHelper.WriteInfoLog("8888888888888888888888888888\n");
-									foreach (string LoName in mpp.LayoutsToPlot) {
-										try {
+                                //if (mpp.TurnOnViewports) TurnOnViewports(tempDoc, tempDb);
+                                //if (mpp.PlotCurrentLayout) {
+                                //    if (mpp.ApplyStamp) AddPlotText(tempDb, tempLoMan.GetLayoutId(tempLoMan.CurrentLayout));
+                                //    Log4NetHelper.WriteInfoLog("6666666666666666666666666666666\n");
+                                //    MyPlottingPart(mpp, CheckSpaceSetLtScale(tempLoMan.CurrentLayout, mpp));
+                                //    Log4NetHelper.WriteInfoLog("777777777777777777777777777777777\n");
+                                //}
+                                //else if (!mpp.LayoutsToPlot.Length.Equals(0)) {
 
-                                            Log4NetHelper.WriteInfoLog("9999999999999999999999999999999999999\n");
-											tempLoMan.CurrentLayout = LoName;
-											if (mpp.ApplyStamp) AddPlotText(tempDb, tempLoMan.GetLayoutId(tempLoMan.CurrentLayout));
-                                            Log4NetHelper.WriteInfoLog("000000000000000000000000000000000000000\n");
-											MyPlottingPart(mpp, CheckSpaceSetLtScale(LoName, mpp));
-										}
-										catch {}
-									}
-								}
+                                //    Log4NetHelper.WriteInfoLog("8888888888888888888888888888\n");
+                                //    foreach (string LoName in mpp.LayoutsToPlot) {
+                                //        try {
+
+                                //            Log4NetHelper.WriteInfoLog("9999999999999999999999999999999999999\n");
+                                //            tempLoMan.CurrentLayout = LoName;
+                                //            if (mpp.ApplyStamp) AddPlotText(tempDb, tempLoMan.GetLayoutId(tempLoMan.CurrentLayout));
+                                //            Log4NetHelper.WriteInfoLog("000000000000000000000000000000000000000\n");
+                                //            MyPlottingPart(mpp, CheckSpaceSetLtScale(LoName, mpp));
+                                //        }
+                                //        catch {}
+                                //    }
+                                //}
 							}
 						}
 						catch (Autodesk.AutoCAD.Runtime.Exception AcadEr) {
@@ -1377,13 +1399,11 @@ namespace HomeDesignCad.Plot.Dialog
         private void btnPickdrawing_Click(object sender, EventArgs e)
         {
 
-            Document doc =
-
-                cad.DocumentManager.MdiActiveDocument;
+            Document doc = GetActiveDoc();
 
             Editor ed = doc.Editor;
 
-            Database db = doc.Database;
+            Database db = GetCurrentDb(doc);
 
 
             Transaction tr =
@@ -1428,20 +1448,30 @@ namespace HomeDesignCad.Plot.Dialog
                         BlockReference br = null;
                         HdCadPlotParams hacadpp = null;
 
-                        PlotObjectsArray = new object[sset.Count];
+                        PlotObjectsArray = new HdCadPlotParams[sset.Count];
 
+                        int ppi = 0;
                         foreach (SelectedObject obj in sset)
                         {
+
+                            ppi=ppi+1;
                             // ed.WriteMessage("\nhas data");
                             br = GetBlockReference(obj, tr);
-                            hacadpp = new HdCadPlotParams();
-
-                            hacadpp.MinPt = br.GeometricExtents.MinPoint;
+                           // hacadpp = new HdCadPlotParams();
+                            PlotObjectsArray[ppi - 1] = new HdCadPlotParams();
+                            PlotObjectsArray[ppi-1].MinPt = br.GeometricExtents.MinPoint;
                             //hacadpp.MinPt = br.GeometricExtents.MinPoint.Y * (1 - 0.0001);
 
-                            hacadpp.MaxPt = br.GeometricExtents.MaxPoint;
+                            PlotObjectsArray[ppi - 1].MaxPt = br.GeometricExtents.MaxPoint;
+                            PlotObjectsArray[ppi - 1].Device = "DWG To PDF.pc3";
+                            PlotObjectsArray[ppi - 1].Paper = SysUtil.getIPaperParams(br.Name);
+                            PlotObjectsArray[ppi - 1].PlotFileLocation = Convert.ToString(ppi + ".pdf");
 
-                            //Log4NetHelper.WriteInfoLog(br.BlockName + "\n");
+                           // PlotObjectsArray[ii - 1] = hacadpp;
+                           // Log4NetHelper.WriteInfoLog(br.BlockName + "\n");
+                            Log4NetHelper.WriteInfoLog(br.Name + "\n");
+                            Log4NetHelper.WriteInfoLog(PlotObjectsArray[ppi - 1] + "\n");
+                           
                             //Log4NetHelper.WriteInfoLog(br.Name+"\n");
                             //Log4NetHelper.WriteInfoLog(br.Bounds + "\n");
                             //Log4NetHelper.WriteInfoLog(br.Position + "\n");
@@ -1458,6 +1488,8 @@ namespace HomeDesignCad.Plot.Dialog
 
 
                         }
+
+                        Log4NetHelper.WriteInfoLog(PlotObjectsArray + "\n");
                     }
                     catch (System.Exception ex)
                     {
@@ -1487,6 +1519,20 @@ namespace HomeDesignCad.Plot.Dialog
             //return length;
 
 
+        }
+
+        private static Database GetCurrentDb(Document doc)
+        {
+            Database db = doc.Database;
+            return db;
+        }
+
+        private static Document GetActiveDoc()
+        {
+            Document doc =
+
+                cad.DocumentManager.MdiActiveDocument;
+            return doc;
         }
 
         private BlockReference GetBlockReference(SelectedObject obj, Transaction tr)
