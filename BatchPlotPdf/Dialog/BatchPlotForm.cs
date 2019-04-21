@@ -1013,6 +1013,7 @@ Db.OpenMode.ForRead) as Db.Layout;
 			PlotInfo PltInfo = new PlotInfo();
 			PltInfo.Layout = LayoutManager.Current.GetLayoutId(LayoutManager.Current.CurrentLayout);
 			PlotSettings PltSet = new PlotSettings(IsModel);
+            PltSet.CopyFrom(PltInfo.Layout);
 			PlotSettingsValidator PltSetVald = PlotSettingsValidator.Current;
 			PlotPageInfo PltPgInfo = new PlotPageInfo();
 			PlotProgressDialog PltPrgDia = new PlotProgressDialog(false, 1, true);
@@ -1023,43 +1024,69 @@ Db.OpenMode.ForRead) as Db.Layout;
 			try {
 				PltSetVald.SetPlotConfigurationName(PltSet, PltParams.Device, PltParams.CanonicalPaper);
                 /////////////////
-
+                Log4NetHelper.WriteInfoLog("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n");
 				PltSetVald.RefreshLists(PltSet);
-
+                Log4NetHelper.WriteInfoLog("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\n");
 				PltSetVald.SetCurrentStyleSheet(PltSet, PltParams.ctbFile);
 
-
+                Log4NetHelper.WriteInfoLog("ccccccccccccccccccccccccccccccccc\n");
 				PltSetVald.SetPlotOrigin(PltSet, new Point2d(0.0, 0.0));
 				PltSetVald.SetPlotPaperUnits(PltSet, PlotPaperUnit.Millimeters);
                 PltSetVald.SetPlotType(PltSet, Autodesk.AutoCAD.DatabaseServices.PlotType.Extents);
-
+                Log4NetHelper.WriteInfoLog("ddddddddddddddddddddddddddddddddd\n");
                 //////////////////////////////////////////////
 
 				PltSetVald.SetPlotRotation(PltSet, PltParams.AcPlotRotation);
 
-
+                Log4NetHelper.WriteInfoLog("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\n");
 
 				PltSetVald.SetUseStandardScale(PltSet, true);
+                Log4NetHelper.WriteInfoLog("fffffffffffffffffffffffffffffffff\n");
 				PltSetVald.SetStdScaleType(PltSet, PltParams.AcScaleType);
+                Log4NetHelper.WriteInfoLog("gggggggggggggggggggggggggggggggggg\n");
                 PltSetVald.SetPlotCentered(PltSet, true);
+                Log4NetHelper.WriteInfoLog("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh\n");
 				PltSet.ScaleLineweights = PltParams.ScaleLineweight;
+                Log4NetHelper.WriteInfoLog("iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii\n");
 				PltSetVald.SetZoomToPaperOnUpdate(PltSet, false);
+                Log4NetHelper.WriteInfoLog("jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj\n");
 				PltInfo.OverrideSettings = PltSet;
+                Log4NetHelper.WriteInfoLog("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk\n");
 				PlotInfoValidator PltInfoVald = new PlotInfoValidator();
+                Log4NetHelper.WriteInfoLog("lllllllllllllllllllllllllllllllllllll\n");
 				PltInfoVald.MediaMatchingPolicy = MatchingPolicy.MatchEnabled;
+                Log4NetHelper.WriteInfoLog("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\n");
 				PltInfoVald.Validate(PltInfo);
+                Log4NetHelper.WriteInfoLog("nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn\n");
 				PltPrgDia.OnBeginPlot();
+                Log4NetHelper.WriteInfoLog("oooooooooooooooooooooooooooooooooooooo\n");
 				PltPrgDia.IsVisible = true;
 				PltEng.BeginPlot(PltPrgDia, null);
-				if (PltParams.PlotToFile) PltEng.BeginDocument(PltInfo, db.Filename, null, PltParams.Amount, true, PltParams.PlotFileLocation);
-				else PltEng.BeginDocument(PltInfo, db.Filename, null, PltParams.Amount, false, string.Empty);
-				PltEng.BeginPage(PltPgInfo, PltInfo, true, null);
+                Log4NetHelper.WriteInfoLog("pppppppppppppppppppppppppppppppppppppppp\n");
+                if (PltParams.PlotToFile)
+                {
+                    PltEng.BeginDocument(PltInfo, db.Filename, null, PltParams.Amount, true, PltParams.PlotFileLocation);
+                    Log4NetHelper.WriteInfoLog("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq\n");
+                }
+                else
+                {
+                    PltEng.BeginDocument(PltInfo, db.Filename, null, PltParams.Amount, false, string.Empty);
+                    Log4NetHelper.WriteInfoLog("rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\n");
+                }
+                PltEng.BeginPage(PltPgInfo, PltInfo, true, null);
+                Log4NetHelper.WriteInfoLog("ssssssssssssssssssssssssssssssssssssssss\n");
 				PltEng.BeginGenerateGraphics(null);
+                Log4NetHelper.WriteInfoLog("ttttttttttttttttttttttttttttttttttttttttt\n");
 				PltEng.EndGenerateGraphics(null);
+                Log4NetHelper.WriteInfoLog("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu\n");
 				PltEng.EndPage(null);
+                Log4NetHelper.WriteInfoLog("vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv\n");
 				PltEng.EndDocument(null);
+                Log4NetHelper.WriteInfoLog("wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww\n");
 				PltEng.EndPlot(null);
+                Log4NetHelper.WriteInfoLog("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n");
 				PltPrgDia.OnEndPlot();
+                Log4NetHelper.WriteInfoLog("yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy\n");
 			}
 			catch (Autodesk.AutoCAD.Runtime.Exception AcadEr) {
 				MessageBox.Show(AcadEr.Message, "Printing error (AutoCAD).");
@@ -1068,8 +1095,11 @@ Db.OpenMode.ForRead) as Db.Layout;
 				MessageBox.Show(ex.Message, "Printing error (System).");
 			}
 			PltPrgDia.Destroy();
+            Log4NetHelper.WriteInfoLog("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\n");
 			PltEng.Destroy();
+            Log4NetHelper.WriteInfoLog("00000000000000000000000000000000000000\n");
 			cad.SetSystemVariable("BackGroundPlot", OldBkGdPlt);
+            Log4NetHelper.WriteInfoLog("11111111111111111111111111111111111\n");
 		}
 		
 		[CommandMethod("MyBPlot", CommandFlags.Session)]
