@@ -250,17 +250,17 @@ namespace HomeDesignCad.Plot.Cmd
                         Db.Layout layout = tr.GetObject(model.LayoutId,
                         Db.OpenMode.ForRead) as Db.Layout;
 
-                        using (Pt.PlotInfo pi = new Pt.PlotInfo())
+                        using (Pt.PlotInfo PltInfo = new Pt.PlotInfo())
                         {
-                            pi.Layout = model.LayoutId;
+                            PltInfo.Layout = model.LayoutId;
 
-                            using (Db.PlotSettings ps = new Db.PlotSettings(layout.ModelType)
+                            using (Db.PlotSettings PltSet = new Db.PlotSettings(layout.ModelType)
                               )
                             {
 
-                                ps.CopyFrom(layout);
+                                PltSet.CopyFrom(layout);
 
-                                Db.PlotSettingsValidator psv = Db.PlotSettingsValidator
+                                Db.PlotSettingsValidator PltSetVald = Db.PlotSettingsValidator
                                   .Current;
 
                              
@@ -276,25 +276,25 @@ namespace HomeDesignCad.Plot.Cmd
 
 
 
-                                psv.SetZoomToPaperOnUpdate(ps, true);
+                                PltSetVald.SetZoomToPaperOnUpdate(PltSet, true);
 
-                                psv.SetPlotWindowArea(ps, extents);
-                                psv.SetPlotType(ps, Db.PlotType.Window);
-                                psv.SetUseStandardScale(ps, true);
-                                psv.SetStdScaleType(ps, Db.StdScaleType.ScaleToFit);
-                                psv.SetPlotCentered(ps, true);
-                                psv.SetPlotRotation(ps, Db.PlotRotation.Degrees000);
+                                PltSetVald.SetPlotWindowArea(PltSet, extents);
+                                PltSetVald.SetPlotType(PltSet, Db.PlotType.Window);
+                                PltSetVald.SetUseStandardScale(PltSet, true);
+                                PltSetVald.SetStdScaleType(PltSet, Db.StdScaleType.ScaleToFit);
+                                PltSetVald.SetPlotCentered(PltSet, true);
+                                PltSetVald.SetPlotRotation(PltSet, Db.PlotRotation.Degrees000);
 
                                 // We'll use the standard DWF PC3, as
                                 // for today we're just plotting to file
-                                psv.SetPlotConfigurationName(ps, pcsFileName, mediaName);
+                                PltSetVald.SetPlotConfigurationName(PltSet, pcsFileName, mediaName);
 
                                 // We need to link the PlotInfo to the
                                 // PlotSettings and then validate it
-                                pi.OverrideSettings = ps;
-                                Pt.PlotInfoValidator piv = new Pt.PlotInfoValidator();
-                                piv.MediaMatchingPolicy = Pt.MatchingPolicy.MatchEnabled;
-                                piv.Validate(pi);
+                                PltInfo.OverrideSettings = PltSet;
+                                Pt.PlotInfoValidator PltInfoVald = new Pt.PlotInfoValidator();
+                                PltInfoVald.MediaMatchingPolicy = Pt.MatchingPolicy.MatchEnabled;
+                                PltInfoVald.Validate(PltInfo);
 
                                 // A PlotEngine does the actual plotting
                                 // (can also create one for Preview)
@@ -339,7 +339,7 @@ namespace HomeDesignCad.Plot.Cmd
                                             pe.BeginPlot(ppd, null);
 
                                             // We'll be plotting a single document
-                                            pe.BeginDocument(pi, doc.Name, null, 1, true,
+                                            pe.BeginDocument(PltInfo, doc.Name, null, 1, true,
                                                 // Let's plot to file
                                              outputFileName);
                                             // Which contains a single sheet
@@ -348,7 +348,7 @@ namespace HomeDesignCad.Plot.Cmd
                                             ppd.UpperSheetProgressRange = 100;
                                             ppd.SheetProgressPos = 0;
                                             Pt.PlotPageInfo ppi = new Pt.PlotPageInfo();
-                                            pe.BeginPage(ppi, pi, true, null);
+                                            pe.BeginPage(ppi, PltInfo, true, null);
                                             pe.BeginGenerateGraphics(null);
                                             pe.EndGenerateGraphics(null);
 

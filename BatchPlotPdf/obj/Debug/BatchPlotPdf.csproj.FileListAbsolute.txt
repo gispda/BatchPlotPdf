@@ -8,6 +8,5 @@ F:\project\BatchPlotPdf\BatchPlotPdf\bin\Debug\log4net.pdb
 F:\project\BatchPlotPdf\BatchPlotPdf\bin\Debug\log4net.xml
 F:\project\BatchPlotPdf\BatchPlotPdf\obj\Debug\BatchPlotPdf.dll
 F:\project\BatchPlotPdf\BatchPlotPdf\obj\Debug\BatchPlotPdf.pdb
-F:\project\BatchPlotPdf\BatchPlotPdf\obj\Debug\BatchPlotPdf.csprojResolveAssemblyReference.cache
 F:\project\BatchPlotPdf\BatchPlotPdf\obj\Debug\HomeDesignCad.Plot.Cmd.BatchPlotCommands.resources
 F:\project\BatchPlotPdf\BatchPlotPdf\obj\Debug\HomeDesignCad.Plot.Dialog.BatchPlotForm.resources
