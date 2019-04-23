@@ -22,6 +22,7 @@ using Db = Autodesk.AutoCAD.DatabaseServices;
 using Us = Autodesk.AutoCAD.DatabaseServices.SymbolUtilityServices;
 using PCM = Autodesk.AutoCAD.PlottingServices.PlotConfigManager;
 using HomeDesignCad.Plot.Util;
+using System.Text;
 
 [assembly: CommandClass(typeof(HomeDesignCad.Plot.Dialog.BatchPlotForm))]
 
@@ -53,13 +54,13 @@ namespace HomeDesignCad.Plot.Dialog
         private CheckBox Lo1Ckbox;
         private Panel panel1;
         private GroupBox groupBox1;
-        private TextBox tbprogtype;
         private GroupBox groupBox2;
         private TextBox tbprogname;
         private GroupBox groupBox4;
         private TextBox tbpdfname;
         private GroupBox groupBox3;
         private TextBox tbdrawingname;
+        private ComboBox cmbprogtype;
   
 		private string PlotDate = DateTime.Now.Date.ToShortDateString();
 		public BatchPlotForm()
@@ -97,19 +98,19 @@ namespace HomeDesignCad.Plot.Dialog
             this.SelLoCkbox = new System.Windows.Forms.CheckBox();
             this.Lo1Ckbox = new System.Windows.Forms.CheckBox();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.tbprogtype = new System.Windows.Forms.TextBox();
-            this.tbprogname = new System.Windows.Forms.TextBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.tbdrawingname = new System.Windows.Forms.TextBox();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.tbpdfname = new System.Windows.Forms.TextBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.tbpdfname = new System.Windows.Forms.TextBox();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.tbdrawingname = new System.Windows.Forms.TextBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.tbprogname = new System.Windows.Forms.TextBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.cmbprogtype = new System.Windows.Forms.ComboBox();
             this.panel1.SuspendLayout();
-            this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            this.groupBox3.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // CancelBtn
@@ -266,48 +267,23 @@ namespace HomeDesignCad.Plot.Dialog
             this.panel1.Size = new System.Drawing.Size(529, 380);
             this.panel1.TabIndex = 12;
             // 
-            // groupBox1
+            // groupBox4
             // 
-            this.groupBox1.Controls.Add(this.tbprogtype);
-            this.groupBox1.ForeColor = System.Drawing.Color.Yellow;
-            this.groupBox1.Location = new System.Drawing.Point(3, 0);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(510, 55);
-            this.groupBox1.TabIndex = 0;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "工程种类";
+            this.groupBox4.Controls.Add(this.tbpdfname);
+            this.groupBox4.ForeColor = System.Drawing.Color.Yellow;
+            this.groupBox4.Location = new System.Drawing.Point(2, 181);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(510, 55);
+            this.groupBox4.TabIndex = 3;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "pdf文件名";
             // 
-            // tbprogtype
+            // tbpdfname
             // 
-            this.tbprogtype.Location = new System.Drawing.Point(26, 21);
-            this.tbprogtype.Name = "tbprogtype";
-            this.tbprogtype.Size = new System.Drawing.Size(454, 21);
-            this.tbprogtype.TabIndex = 0;
-            // 
-            // tbprogname
-            // 
-            this.tbprogname.Location = new System.Drawing.Point(26, 21);
-            this.tbprogname.Name = "tbprogname";
-            this.tbprogname.Size = new System.Drawing.Size(454, 21);
-            this.tbprogname.TabIndex = 0;
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.tbprogname);
-            this.groupBox2.ForeColor = System.Drawing.Color.Yellow;
-            this.groupBox2.Location = new System.Drawing.Point(3, 61);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(510, 55);
-            this.groupBox2.TabIndex = 1;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "工程名称";
-            // 
-            // tbdrawingname
-            // 
-            this.tbdrawingname.Location = new System.Drawing.Point(26, 21);
-            this.tbdrawingname.Name = "tbdrawingname";
-            this.tbdrawingname.Size = new System.Drawing.Size(454, 21);
-            this.tbdrawingname.TabIndex = 0;
+            this.tbpdfname.Location = new System.Drawing.Point(26, 21);
+            this.tbpdfname.Name = "tbpdfname";
+            this.tbpdfname.Size = new System.Drawing.Size(454, 21);
+            this.tbpdfname.TabIndex = 0;
             // 
             // groupBox3
             // 
@@ -320,23 +296,55 @@ namespace HomeDesignCad.Plot.Dialog
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "图名";
             // 
-            // tbpdfname
+            // tbdrawingname
             // 
-            this.tbpdfname.Location = new System.Drawing.Point(26, 21);
-            this.tbpdfname.Name = "tbpdfname";
-            this.tbpdfname.Size = new System.Drawing.Size(454, 21);
-            this.tbpdfname.TabIndex = 0;
+            this.tbdrawingname.Location = new System.Drawing.Point(26, 21);
+            this.tbdrawingname.Name = "tbdrawingname";
+            this.tbdrawingname.Size = new System.Drawing.Size(454, 21);
+            this.tbdrawingname.TabIndex = 0;
+            this.tbdrawingname.Text = "一层平面图";
             // 
-            // groupBox4
+            // groupBox2
             // 
-            this.groupBox4.Controls.Add(this.tbpdfname);
-            this.groupBox4.ForeColor = System.Drawing.Color.Yellow;
-            this.groupBox4.Location = new System.Drawing.Point(2, 181);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(510, 55);
-            this.groupBox4.TabIndex = 3;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "pdf文件名";
+            this.groupBox2.Controls.Add(this.tbprogname);
+            this.groupBox2.ForeColor = System.Drawing.Color.Yellow;
+            this.groupBox2.Location = new System.Drawing.Point(3, 61);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(510, 55);
+            this.groupBox2.TabIndex = 1;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "工程名称";
+            // 
+            // tbprogname
+            // 
+            this.tbprogname.Location = new System.Drawing.Point(26, 21);
+            this.tbprogname.Name = "tbprogname";
+            this.tbprogname.Size = new System.Drawing.Size(454, 21);
+            this.tbprogname.TabIndex = 0;
+            this.tbprogname.Text = "景茂.誉府一、二、三期";
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.cmbprogtype);
+            this.groupBox1.ForeColor = System.Drawing.Color.Yellow;
+            this.groupBox1.Location = new System.Drawing.Point(3, 0);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(510, 55);
+            this.groupBox1.TabIndex = 0;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "工程种类";
+            // 
+            // cmbprogtype
+            // 
+            this.cmbprogtype.FormattingEnabled = true;
+            this.cmbprogtype.Items.AddRange(new object[] {
+            "幕施",
+            "家装"});
+            this.cmbprogtype.Location = new System.Drawing.Point(26, 21);
+            this.cmbprogtype.Name = "cmbprogtype";
+            this.cmbprogtype.Size = new System.Drawing.Size(453, 20);
+            this.cmbprogtype.TabIndex = 0;
+            this.cmbprogtype.Text = "幕施";
             // 
             // BatchPlotForm
             // 
@@ -361,14 +369,13 @@ namespace HomeDesignCad.Plot.Dialog
             this.Load += new System.EventHandler(this.MyPlotLoad);
             this.Resize += new System.EventHandler(this.FormResized);
             this.panel1.ResumeLayout(false);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
 
 		}
@@ -879,6 +886,17 @@ Db.OpenMode.ForRead) as Db.Layout;
         {
 
         }
+
+        private string GetPdfname(BlockReference br)
+        {
+
+            StringBuilder spdfname =new StringBuilder();
+            spdfname.Append(this.cmbprogtype.Text);
+            spdfname.Append(this.tbprogname.Text);
+
+
+            return spdfname.ToString();
+        }
         /// <summary>
         /// 拉框选择打印图形
         /// </summary>
@@ -890,6 +908,7 @@ Db.OpenMode.ForRead) as Db.Layout;
             Document doc = GetActiveDoc();
 
             Editor ed = doc.Editor;
+
 
             Database db = GetCurrentDb(doc);
 

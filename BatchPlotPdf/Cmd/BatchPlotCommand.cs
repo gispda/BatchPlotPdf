@@ -159,6 +159,7 @@ namespace HomeDesignCad.Plot.Cmd
                     {
                        // ed.WriteMessage("\nhas data");
                         br = GetBlockReference(obj, tr);
+                        
                         //Log4NetHelper.WriteInfoLog(br.BlockName + "\n");
                         //Log4NetHelper.WriteInfoLog(br.Name+"\n");
                         //Log4NetHelper.WriteInfoLog(br.Bounds + "\n");
