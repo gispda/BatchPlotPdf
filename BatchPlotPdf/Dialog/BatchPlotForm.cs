@@ -62,6 +62,8 @@ namespace HomeDesignCad.Plot.Dialog
         private TextBox tbdrawingname;
         private ComboBox cmbprogtype;
         private Button btnapply;
+
+        private int papercount;
   
 		private string PlotDate = DateTime.Now.Date.ToShortDateString();
 		public BatchPlotForm()
@@ -70,7 +72,7 @@ namespace HomeDesignCad.Plot.Dialog
 			// The InitializeComponent() call is required for Windows Forms designer support.
 			//
 			InitializeComponent();
-
+            papercount = 0;
 
            
 			//
@@ -683,6 +685,8 @@ Db.OpenMode.ForRead) as Db.Layout;
 		[CommandMethod("MyBPlot", CommandFlags.Session)]
 		public void MethodCall () {
 			DialogResult DiaRslt;
+
+
 			using (BatchPlotForm modalForm = new BatchPlotForm()) {
 				DiaRslt = Autodesk.AutoCAD.ApplicationServices.Application.ShowModalDialog(modalForm);
 			}
@@ -744,6 +748,8 @@ Db.OpenMode.ForRead) as Db.Layout;
 							MessageBox.Show(ex.Message, "Drawing error (System).");
 						}
 						finally {
+
+
                             Log4NetHelper.WriteInfoLog("最后清理....................\n");
 							//if (tempDoc != null) tempDoc.CloseAndDiscard();
 						}
@@ -751,8 +757,15 @@ Db.OpenMode.ForRead) as Db.Layout;
 				}
 			}
 			try {
-				Array.Clear(ScaleValueArray, 0, ScaleValueArray.Length);
+				//Array.Clear(ScaleValueArray, 0, ScaleValueArray.Length);
+                for (int i = 0; i < papercount;i++ )
+                {
+                    PlotObjectsArray[i] = null;
+                   
+                }
+
 				Array.Clear(PlotObjectsArray, 0, PlotObjectsArray.Length);
+
 			}
 			catch {}
 		}
@@ -1047,6 +1060,8 @@ Db.OpenMode.ForRead) as Db.Layout;
                         HdCadPlotParams hacadpp = null;
 
                         PlotObjectsArray = new HdCadPlotParams[sset.Count];
+
+                        papercount = sset.Count;
 
                         int ppi = 0;
                         foreach (SelectedObject obj in sset)

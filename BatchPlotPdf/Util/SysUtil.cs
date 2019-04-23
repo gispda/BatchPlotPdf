@@ -25,7 +25,10 @@ namespace HomeDesignCad.Plot.Util
 
         public static void addPdfDict(int idx, string pdfname)
         {
+            if(pdfname!=null || idx<0)
             pdfdict.Add(idx, pdfname);
+            else
+                Log4NetHelper.WriteErrorLog("出错了"+pdfname+"\n");
          
         }
         public static string getpdfbyidx(int idx)
