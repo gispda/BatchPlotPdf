@@ -1148,7 +1148,7 @@ Db.OpenMode.ForRead) as Db.Layout;
             {
                 PlotObjectsArray[keyidx].PlotFileLocation = tbpdfname.Text;
                 tvpapers.SelectedNode.Text = tbpdfname.Text;
-                Log4NetHelper.WriteErrorLog("正确修改好pdf名称\n");
+                Log4NetHelper.WriteInfoLog("正确修改好pdf名称\n");
             }
             else
             {
