@@ -886,15 +886,79 @@ Db.OpenMode.ForRead) as Db.Layout;
         {
 
         }
+        private string GetBlockAttribute(BlockReference br, string attributename, Transaction tr)
+        {
+            string svalue = null;
 
-        private string GetPdfname(BlockReference br)
+            Db.AttributeCollection attCol =
+
+            br.AttributeCollection;
+
+            foreach (ObjectId attId in attCol)
+            {
+
+                AttributeReference attRef =
+
+                  (AttributeReference)tr.GetObject(attId,
+
+                    OpenMode.ForRead);
+
+
+                string str =
+
+                  ("\n  Attribute Tag: "
+
+                    + attRef.Tag
+
+                    + "\n    Attribute String: "
+
+                    + attRef.TextString
+
+                  );
+                if (attRef.Tag.CompareTo(attributename) == 0)
+                {
+                    svalue = attRef.TextString;
+                    Log4NetHelper.WriteInfoLog("找到属性值" + svalue);
+                    break;
+                }
+                else
+               Log4NetHelper.WriteInfoLog(str);
+
+            }
+            return svalue;
+        }
+        private string GetPdfname(BlockReference br, Transaction tr)
         {
 
             StringBuilder spdfname =new StringBuilder();
             spdfname.Append(this.cmbprogtype.Text);
+            spdfname.Append("-");
             spdfname.Append(this.tbprogname.Text);
+            spdfname.Append("-");
+            string avalue = GetBlockAttribute(br, "001", tr);
+            if (avalue != null)
+            {
+                //this.tbdrawingname.Text = avalue;
 
+                spdfname.Append(avalue);
 
+            }
+            else
+                spdfname.Append("自定义下");
+            avalue = GetBlockAttribute(br, "一层平面图", tr);
+            if (avalue != null)
+            {
+                this.tbdrawingname.Text = avalue;
+
+                spdfname.Append("-");
+                spdfname.Append(avalue);
+            }
+            else
+            {
+                spdfname.Append("-");
+                spdfname.Append("一层平面图");
+            }
+            spdfname.Append(".pdf");
             return spdfname.ToString();
         }
         /// <summary>
@@ -972,8 +1036,9 @@ Db.OpenMode.ForRead) as Db.Layout;
                             PlotObjectsArray[ppi - 1].MaxPt = br.GeometricExtents.MaxPoint;
                             PlotObjectsArray[ppi - 1].Device = "DWG To PDF.pc3";
                             PlotObjectsArray[ppi - 1].Paper = SysUtil.getIPaperParams(br.Name);
-                            PlotObjectsArray[ppi - 1].PlotFileLocation = Convert.ToString(ppi + ".pdf");
-
+                            //PlotObjectsArray[ppi - 1].PlotFileLocation = Convert.ToString(ppi + ".pdf");
+                            PlotObjectsArray[ppi - 1].PlotFileLocation = GetPdfname(br,tr);
+                            
                            // PlotObjectsArray[ii - 1] = hacadpp;
                            // Log4NetHelper.WriteInfoLog(br.BlockName + "\n");
                             Log4NetHelper.WriteInfoLog(br.Name + "\n");
