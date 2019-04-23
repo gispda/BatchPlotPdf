@@ -61,6 +61,7 @@ namespace HomeDesignCad.Plot.Dialog
         private GroupBox groupBox3;
         private TextBox tbdrawingname;
         private ComboBox cmbprogtype;
+        private Button btnapply;
   
 		private string PlotDate = DateTime.Now.Date.ToShortDateString();
 		public BatchPlotForm()
@@ -106,6 +107,7 @@ namespace HomeDesignCad.Plot.Dialog
             this.tbprogname = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.cmbprogtype = new System.Windows.Forms.ComboBox();
+            this.btnapply = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -123,7 +125,7 @@ namespace HomeDesignCad.Plot.Dialog
             this.CancelBtn.Name = "CancelBtn";
             this.CancelBtn.Size = new System.Drawing.Size(90, 25);
             this.CancelBtn.TabIndex = 3;
-            this.CancelBtn.Text = "Cancel";
+            this.CancelBtn.Text = "取消";
             this.CancelBtn.UseVisualStyleBackColor = false;
             this.CancelBtn.Click += new System.EventHandler(this.CancelBtnClick);
             // 
@@ -145,7 +147,7 @@ namespace HomeDesignCad.Plot.Dialog
             this.PlotBtn.Name = "PlotBtn";
             this.PlotBtn.Size = new System.Drawing.Size(90, 25);
             this.PlotBtn.TabIndex = 3;
-            this.PlotBtn.Text = "Plot";
+            this.PlotBtn.Text = "打印";
             this.PlotBtn.UseVisualStyleBackColor = false;
             this.PlotBtn.Click += new System.EventHandler(this.PlotBtnClick);
             // 
@@ -168,6 +170,7 @@ namespace HomeDesignCad.Plot.Dialog
             this.tvpapers.Name = "tvpapers";
             this.tvpapers.Size = new System.Drawing.Size(305, 442);
             this.tvpapers.TabIndex = 11;
+            this.tvpapers.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.tvpapers_NodeMouseDoubleClick);
             // 
             // label7
             // 
@@ -258,6 +261,7 @@ namespace HomeDesignCad.Plot.Dialog
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.btnapply);
             this.panel1.Controls.Add(this.groupBox4);
             this.panel1.Controls.Add(this.groupBox3);
             this.panel1.Controls.Add(this.groupBox2);
@@ -345,6 +349,19 @@ namespace HomeDesignCad.Plot.Dialog
             this.cmbprogtype.Size = new System.Drawing.Size(453, 20);
             this.cmbprogtype.TabIndex = 0;
             this.cmbprogtype.Text = "幕施";
+            // 
+            // btnapply
+            // 
+            this.btnapply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnapply.BackColor = System.Drawing.Color.Silver;
+            this.btnapply.ForeColor = System.Drawing.Color.Navy;
+            this.btnapply.Location = new System.Drawing.Point(28, 251);
+            this.btnapply.Name = "btnapply";
+            this.btnapply.Size = new System.Drawing.Size(93, 25);
+            this.btnapply.TabIndex = 11;
+            this.btnapply.Text = "应用";
+            this.btnapply.UseVisualStyleBackColor = false;
+            this.btnapply.Click += new System.EventHandler(this.btnapply_Click);
             // 
             // BatchPlotForm
             // 
@@ -927,6 +944,12 @@ Db.OpenMode.ForRead) as Db.Layout;
             }
             return svalue;
         }
+        private void AddTreePdf(string pdfname)
+        {
+            tvpapers.Nodes.Add(pdfname);
+
+        
+        }
         private string GetPdfname(BlockReference br, Transaction tr)
         {
 
@@ -959,6 +982,8 @@ Db.OpenMode.ForRead) as Db.Layout;
                 spdfname.Append("一层平面图");
             }
             spdfname.Append(".pdf");
+
+            AddTreePdf(spdfname.ToString());
             return spdfname.ToString();
         }
         /// <summary>
@@ -975,6 +1000,8 @@ Db.OpenMode.ForRead) as Db.Layout;
 
 
             Database db = GetCurrentDb(doc);
+
+            SysUtil.clearPdfDict();
 
 
             Transaction tr =
@@ -1038,30 +1065,19 @@ Db.OpenMode.ForRead) as Db.Layout;
                             PlotObjectsArray[ppi - 1].Paper = SysUtil.getIPaperParams(br.Name);
                             //PlotObjectsArray[ppi - 1].PlotFileLocation = Convert.ToString(ppi + ".pdf");
                             PlotObjectsArray[ppi - 1].PlotFileLocation = GetPdfname(br,tr);
-                            
+
+                            SysUtil.addPdfDict(ppi - 1, PlotObjectsArray[ppi - 1].PlotFileLocation);
+                           
                            // PlotObjectsArray[ii - 1] = hacadpp;
                            // Log4NetHelper.WriteInfoLog(br.BlockName + "\n");
                             Log4NetHelper.WriteInfoLog(br.Name + "\n");
                             Log4NetHelper.WriteInfoLog(PlotObjectsArray[ppi - 1] + "\n");
                            
-                            //Log4NetHelper.WriteInfoLog(br.Name+"\n");
-                            //Log4NetHelper.WriteInfoLog(br.Bounds + "\n");
-                            //Log4NetHelper.WriteInfoLog(br.Position + "\n");
-                            //Log4NetHelper.WriteInfoLog(br.BlockTransform + "\n");
-                            //Log4NetHelper.WriteInfoLog(br.BlockUnit + "\n");
-                            //Log4NetHelper.WriteInfoLog("***********************\n");
-                            //Log4NetHelper.WriteInfoLog(br.GeometricExtents.MinPoint + "\n");
-                            //Log4NetHelper.WriteInfoLog("66666666666666666666666666\n");
-                            //Log4NetHelper.WriteInfoLog(br.GeometricExtents.MaxPoint + "\n");
-                            //Log4NetHelper.WriteInfoLog("***********************\n");
-                            //Log4NetHelper.WriteInfoLog("-----------------------------\n");
-                            //PlotOnePaper(db, doc, br, "DWG To PDF.pc3",
-                     // "ISO_A4_(210.00_x_297.00_MM)", "111.pdf");
-
+                     
 
                         }
 
-                        Log4NetHelper.WriteInfoLog(PlotObjectsArray + "\n");
+                        Log4NetHelper.WriteInfoLog("采集图框完毕!\n");
                     }
                     catch (System.Exception ex)
                     {
@@ -1113,6 +1129,33 @@ Db.OpenMode.ForRead) as Db.Layout;
             br = (BlockReference)tr.GetObject(obj.ObjectId, OpenMode.ForRead);
 
             return br;
+        }
+
+        private void tvpapers_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (e.Button == System.Windows.Forms.MouseButtons.Left)
+            {
+                tvpapers.SelectedNode = e.Node;
+                this.tbpdfname.Text = tvpapers.SelectedNode.Text;
+            }
+        }
+
+        private void btnapply_Click(object sender, EventArgs e)
+        {
+            int keyidx = SysUtil.getidxbypdf(tvpapers.SelectedNode.Text);
+
+            if (keyidx != -1)
+            {
+                PlotObjectsArray[keyidx].PlotFileLocation = tbpdfname.Text;
+                tvpapers.SelectedNode.Text = tbpdfname.Text;
+                Log4NetHelper.WriteErrorLog("正确修改好pdf名称\n");
+            }
+            else
+            {
+                MessageBox.Show("需要选中左边的树节点.");
+                Log4NetHelper.WriteErrorLog("需要选中左边的树节点\n");
+            }
+            
         }
 		
 	}
