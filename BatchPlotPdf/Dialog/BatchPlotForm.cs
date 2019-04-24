@@ -553,7 +553,7 @@ Db.OpenMode.ForRead) as Db.Layout;
                 Db.OpenMode.ForRead) as Db.BlockTableRecord;
 
                 Db.Layout layout = tr.GetObject(model.LayoutId,
-                Db.OpenMode.ForRead) as Db.Layout;
+                Db.OpenMode.ForWrite) as Db.Layout;
 
 
                
@@ -576,7 +576,7 @@ Db.OpenMode.ForRead) as Db.Layout;
                     //PltSetVald.RefreshLists(PltSet);
                     //Log4NetHelper.WriteInfoLog("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\n");
                     //PltSetVald.SetCurrentStyleSheet(PltSet, PltParams.ctbFile);
-
+                    PltSetVald.SetCurrentStyleSheet(layout, PltParams.ctbFile);
                     //Log4NetHelper.WriteInfoLog("ccccccccccccccccccccccccccccccccc\n");
                     //PltSetVald.SetPlotOrigin(PltSet, new Point2d(0.0, 0.0));
                     //PltSetVald.SetPlotPaperUnits(PltSet, PlotPaperUnit.Millimeters);
@@ -1077,6 +1077,8 @@ Db.OpenMode.ForRead) as Db.Layout;
 
                             PlotObjectsArray[ppi - 1].MaxPt = br.GeometricExtents.MaxPoint;
                             PlotObjectsArray[ppi - 1].Device = "DWG To PDF.pc3";
+                            PlotObjectsArray[ppi - 1].ctbFile = "acad_幕墙.ctb";
+
                             PlotObjectsArray[ppi - 1].CanonicalPaper = SysUtil.getIPaperParams(br.Name);
                             Log4NetHelper.WriteInfoLog("纸张定义是："+ PlotObjectsArray[ppi - 1].CanonicalPaper + "\n");
                             //PlotObjectsArray[ppi - 1].PlotFileLocation = Convert.ToString(ppi + ".pdf");
