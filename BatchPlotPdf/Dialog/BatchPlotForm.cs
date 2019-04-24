@@ -598,8 +598,8 @@ Db.OpenMode.ForRead) as Db.Layout;
                     //Log4NetHelper.WriteInfoLog("iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii\n");
                     //PltSetVald.SetZoomToPaperOnUpdate(PltSet, false);
                     extents = new Db.Extents2d(
-                                    PltParams.MinPt.X * (1 - 0.0001),
-                                    PltParams.MinPt.Y * (1 + 0.001),
+                                    PltParams.MinPt.X * (1 - 0.0005),
+                                    PltParams.MinPt.Y * (1 + 0.0005),
                                     PltParams.MaxPt.X,
                                     PltParams.MaxPt.Y
                                   );
@@ -1077,7 +1077,8 @@ Db.OpenMode.ForRead) as Db.Layout;
 
                             PlotObjectsArray[ppi - 1].MaxPt = br.GeometricExtents.MaxPoint;
                             PlotObjectsArray[ppi - 1].Device = "DWG To PDF.pc3";
-                            PlotObjectsArray[ppi - 1].Paper = SysUtil.getIPaperParams(br.Name);
+                            PlotObjectsArray[ppi - 1].CanonicalPaper = SysUtil.getIPaperParams(br.Name);
+                            Log4NetHelper.WriteInfoLog("纸张定义是："+ PlotObjectsArray[ppi - 1].CanonicalPaper + "\n");
                             //PlotObjectsArray[ppi - 1].PlotFileLocation = Convert.ToString(ppi + ".pdf");
                             PlotObjectsArray[ppi - 1].PlotFileLocation = GetPdfname(br,tr);
 

@@ -67,13 +67,13 @@ namespace HomeDesignCad.Plot.Util
 
             try
             {
-                Log4NetHelper.WriteErrorLog("找到key:" + bkname + ":"+dict[bkname]+"\n");
+                Log4NetHelper.WriteInfoLog("找到key:" + bkname + ":"+dict[bkname]+"\n");
                 return dict[bkname];
             }
             catch (Exception ex)
             {
 
-                Log4NetHelper.WriteErrorLog("没有找到key:" + bkname+"\n");
+                Log4NetHelper.WriteInfoLog("没有找到key:" + bkname+"\n");
                 return "ISO_full_bleed_A2_(594.00_x_420.00_MM)";
             }
         }
