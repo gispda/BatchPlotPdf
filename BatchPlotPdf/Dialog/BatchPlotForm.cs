@@ -555,8 +555,12 @@ Db.OpenMode.ForRead) as Db.Layout;
                 Db.Layout layout = tr.GetObject(model.LayoutId,
                 Db.OpenMode.ForWrite) as Db.Layout;
 
+                BlockTable bt = tr.GetObject(db.BlockTableId, OpenMode.ForRead, false) as BlockTable;
+                BlockTableRecord btr = tr.GetObject(bt[BlockTableRecord.ModelSpace], OpenMode.ForWrite, false) as BlockTableRecord;
+                Circle acCirc = null;
 
-               
+
+                Point3d pcen;
                 PlotSettings PltSet = new PlotSettings(IsModel);
                 PltSet.CopyFrom(layout);
                 PltInfo.Layout = model.LayoutId;
@@ -570,7 +574,8 @@ Db.OpenMode.ForRead) as Db.Layout;
                 PlotConfig pc = PCM.SetCurrentConfig(PltParams.Device);
                 try
                 {
-                   
+
+
                     /////////////////
                     Log4NetHelper.WriteInfoLog("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n");
                     //PltSetVald.RefreshLists(PltSet);
@@ -606,7 +611,20 @@ Db.OpenMode.ForRead) as Db.Layout;
 
                     Log4NetHelper.WriteInfoLog("左上角坐标:" + PltParams.MinPt.X + "," + PltParams.MinPt.Y + "\n");
                     Log4NetHelper.WriteInfoLog("右下角角坐标:" + PltParams.MaxPt.X + "," + PltParams.MaxPt.Y + "\n");
+                    if (PltParams.IsFindPaper == false)
+                    {
 
+                        acCirc = new Circle();
+                        pcen = new Point3d(PltParams.MaxPt.X, PltParams.MinPt.Y, 0);
+
+                        acCirc.Center = pcen;
+                        acCirc.Radius = 150;
+                        acCirc.Color = Autodesk.AutoCAD.Colors.Color.FromRgb(255, 0, 0); ;
+                        // Add the new object to the block table record and the transaction
+                        btr.AppendEntity(acCirc);
+
+                        tr.AddNewlyCreatedDBObject(acCirc, true);
+                    }
                     PltSetVald.SetZoomToPaperOnUpdate(PltSet, true);
 
                     PltSetVald.SetPlotWindowArea(PltSet, extents);
@@ -673,12 +691,17 @@ Db.OpenMode.ForRead) as Db.Layout;
                 {
                     MessageBox.Show(ex.Message, "Printing error (System).");
                 }
+                finally
+                { 
+                 
+                }
                 PltPrgDia.Destroy();
                 Log4NetHelper.WriteInfoLog("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\n");
                 PltEng.Destroy();
                 Log4NetHelper.WriteInfoLog("00000000000000000000000000000000000000\n");
                 cad.SetSystemVariable("BackGroundPlot", OldBkGdPlt);
                 Log4NetHelper.WriteInfoLog("11111111111111111111111111111111111\n");
+                tr.Commit();
             }
 		}
 		
@@ -999,6 +1022,8 @@ Db.OpenMode.ForRead) as Db.Layout;
             AddTreePdf(spdfname.ToString());
             return spdfname.ToString();
         }
+
+        
         /// <summary>
         /// 拉框选择打印图形
         /// </summary>
@@ -1064,6 +1089,14 @@ Db.OpenMode.ForRead) as Db.Layout;
                         papercount = sset.Count;
 
                         int ppi = 0;
+                        string paperparams;
+                        bool isfind = true;
+                      
+                //        Dim bt As BlockTable = tm.GetObject(db.BlockTableId, OpenMode.ForRead, False)
+                //Dim btr As BlockTableRecord = tm.GetObject(bt(BlockTableRecord.ModelSpace), OpenMode.ForWrite, False)
+                //Circid = btr.AppendEntity(pcirc)
+                //tm.AddNewlyCreatedDBObject(pcirc, True)
+
                         foreach (SelectedObject obj in sset)
                         {
 
@@ -1078,8 +1111,21 @@ Db.OpenMode.ForRead) as Db.Layout;
                             PlotObjectsArray[ppi - 1].MaxPt = br.GeometricExtents.MaxPoint;
                             PlotObjectsArray[ppi - 1].Device = "DWG To PDF.pc3";
                             PlotObjectsArray[ppi - 1].ctbFile = "acad_幕墙.ctb";
+                            isfind = SysUtil.getIPaperParams(br.Name,out paperparams);
 
-                            PlotObjectsArray[ppi - 1].CanonicalPaper = SysUtil.getIPaperParams(br.Name);
+                            PlotObjectsArray[ppi - 1].CanonicalPaper = paperparams;
+                            if (isfind == false)
+                            {
+                                //acCirc = new Circle();
+                                ////acCirc.Center.X = 
+                                //btr.AppendEntity(null);
+                                //tr.AddNewlyCreatedDBObject(null, true);
+
+                                Log4NetHelper.WriteInfoLog("图框标号不对，需要手工修改下.\n");
+                                PlotObjectsArray[ppi - 1].IsFindPaper = false;
+                            }
+                            else
+                            PlotObjectsArray[ppi - 1].IsFindPaper = true;
                             Log4NetHelper.WriteInfoLog("纸张定义是："+ PlotObjectsArray[ppi - 1].CanonicalPaper + "\n");
                             //PlotObjectsArray[ppi - 1].PlotFileLocation = Convert.ToString(ppi + ".pdf");
                             PlotObjectsArray[ppi - 1].PlotFileLocation = GetPdfname(br,tr);
@@ -1206,7 +1252,13 @@ Db.OpenMode.ForRead) as Db.Layout;
         private string[] LoNames;
         private Point3d MinPoints;
         private Point3d MaxPoints;
+        private bool IsFind;
 
+        public bool IsFindPaper
+        {
+            get { return IsFind; }
+            set { IsFind = value; }
+        }
 
         public HdCadPlotParams() {
             this.MinPoints = new Point3d();

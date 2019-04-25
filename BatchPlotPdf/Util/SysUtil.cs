@@ -59,8 +59,9 @@ namespace HomeDesignCad.Plot.Util
             pdfdict.Clear();
         }
 
-        public static string getIPaperParams(string bkname)
+        public static bool getIPaperParams(string bkname,out string paperparams)
         {
+            bool isfind = false;
             if (dict.Count == 0)
                 buildDict();
 
@@ -68,14 +69,18 @@ namespace HomeDesignCad.Plot.Util
             try
             {
                 Log4NetHelper.WriteInfoLog("找到key:" + bkname + ":"+dict[bkname]+"\n");
-                return dict[bkname];
+                paperparams = dict[bkname];
+                isfind = true;
+               
             }
             catch (Exception ex)
             {
 
                 Log4NetHelper.WriteInfoLog("没有找到key:" + bkname+"\n");
-                return "ISO_full_bleed_A2_(594.00_x_420.00_MM)";
+                paperparams = "ISO_full_bleed_A2_(594.00_x_420.00_MM)";
+               
             }
+            return isfind;
         }
     }
 }
