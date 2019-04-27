@@ -543,6 +543,9 @@ Db.OpenMode.ForRead) as Db.Layout;
 			cad.SetSystemVariable("BackGroundPlot", 0);
 			Database db = HostApplicationServices.WorkingDatabase;
             Db.Extents2d extents;
+
+
+            
             using (Db.Transaction tr = db.TransactionManager.StartTransaction())
             {
                 PlotInfo PltInfo = new PlotInfo();
@@ -986,9 +989,9 @@ Db.OpenMode.ForRead) as Db.Layout;
 
         
         }
-        private string GetPdfname(BlockReference br, Transaction tr)
+        private bool GetPdfname(BlockReference br, out string pdfname,Transaction tr)
         {
-
+            bool isfind = true;
             StringBuilder spdfname =new StringBuilder();
             spdfname.Append(this.cmbprogtype.Text);
             spdfname.Append("-");
@@ -1000,10 +1003,13 @@ Db.OpenMode.ForRead) as Db.Layout;
                 //this.tbdrawingname.Text = avalue;
 
                 spdfname.Append(avalue);
-
+                
             }
             else
+            {
+                isfind = false;
                 spdfname.Append("自定义下");
+            }
             avalue = GetBlockAttribute(br, "一层平面图", tr);
             if (avalue != null)
             {
@@ -1020,7 +1026,9 @@ Db.OpenMode.ForRead) as Db.Layout;
             spdfname.Append(".pdf");
 
             AddTreePdf(spdfname.ToString());
-            return spdfname.ToString();
+            pdfname = spdfname.ToString();
+            return isfind;
+           // return spdfname.ToString();
         }
 
         
@@ -1050,7 +1058,10 @@ Db.OpenMode.ForRead) as Db.Layout;
             using (var eduserinteraction = ed.StartUserInteraction(this.Handle))
             {
                 string blockName = "k1";
-                TypedValue[] tvs = new TypedValue[] { new TypedValue(0, "INSERT"), new TypedValue(2, blockName) };
+                //TypedValue[] tvs = new TypedValue[] { new TypedValue(0, "INSERT"), new TypedValue(2, blockName) };
+
+               TypedValue[] tvs = new TypedValue[] { new TypedValue((int)DxfCode.Start, "INSERT") };
+
                 SelectionFilter sf = new SelectionFilter(tvs);
 
                 using (tr)
@@ -1076,17 +1087,62 @@ Db.OpenMode.ForRead) as Db.Layout;
                         Log4NetHelper.WriteInfoLog("pt1 pt2位置\n");
                         Log4NetHelper.WriteInfoLog(pt1 + "\n");
                         Log4NetHelper.WriteInfoLog(pt2 + "\n");
-                        if (res.Status != PromptStatus.OK)
-                            return;
+                 
+                       
+                            //if (res != null)
+                            //    Log4NetHelper.WriteInfoLog(res.Status+"ffffffffffffffffffff");
+                            //else
+                            //    Log4NetHelper.WriteInfoLog("wwwwwwwwwwwwwwwwwwwwwwwwww");
+                            //Log4NetHelper.WriteInfoLog("PromptStatus.OK" + PromptStatus.OK);
+                            if (res.Status != PromptStatus.OK)
+                                return;
+                            Log4NetHelper.WriteInfoLog("选择的实体状态不正常\n");
+                       
                         SelectionSet sset = res.Value;
+
+
+
+
+                        //Log4NetHelper.WriteInfoLog("sfsdfdsfdsfsdfsdfsdfsdfsdfsdfsdf\n");
                         if (sset.Count == 0)
                             return;
+                        else
+                            Log4NetHelper.WriteInfoLog("选择的实体为"+sset.Count+"\n");
                         BlockReference br = null;
-                        HdCadPlotParams hacadpp = null;
+                        string svalue = null;
 
-                        PlotObjectsArray = new HdCadPlotParams[sset.Count];
+                        SelectionSet bset;
 
-                        papercount = sset.Count;
+                        ObjectId[] objids = sset.GetObjectIds();
+
+                        ObjectIdCollection aselobjids = new ObjectIdCollection();
+                        foreach (ObjectId x in objids)
+                        {
+                           // br = GetBlockReference(obj, tr);
+                            br = (BlockReference)tr.GetObject(x, OpenMode.ForRead);
+                           svalue = this.GetBlockAttribute(br, "001", tr);
+                           if (svalue != null)
+                           {
+
+                               aselobjids.Add(x);
+                               Log4NetHelper.WriteInfoLog("复制objids"+x+"\n");
+                           }
+
+                        }
+
+
+                        ObjectId[] aobjids = new ObjectId[aselobjids.Count];
+                        int i=0;
+                        foreach (ObjectId x in aselobjids)
+                        {
+                            aobjids[i] = x;
+                            i = i+1;
+                        }
+                        SelectionSet aset = SelectionSet.FromObjectIds(aobjids);
+                        Log4NetHelper.WriteInfoLog("cccccccccccc3333333333333333333\n");
+                        PlotObjectsArray = new HdCadPlotParams[aset.Count];
+
+                        papercount = aset.Count;
 
                         int ppi = 0;
                         string paperparams;
@@ -1096,11 +1152,13 @@ Db.OpenMode.ForRead) as Db.Layout;
                 //Dim btr As BlockTableRecord = tm.GetObject(bt(BlockTableRecord.ModelSpace), OpenMode.ForWrite, False)
                 //Circid = btr.AppendEntity(pcirc)
                 //tm.AddNewlyCreatedDBObject(pcirc, True)
-
-                        foreach (SelectedObject obj in sset)
+                        string pdfname = null;
+                        foreach (SelectedObject obj in aset)
                         {
 
                             ppi=ppi+1;
+
+                            Log4NetHelper.WriteInfoLog("bbbb1111111111111111111111111111\n");
                             // ed.WriteMessage("\nhas data");
                             br = GetBlockReference(obj, tr);
                            // hacadpp = new HdCadPlotParams();
@@ -1128,7 +1186,12 @@ Db.OpenMode.ForRead) as Db.Layout;
                             PlotObjectsArray[ppi - 1].IsFindPaper = true;
                             Log4NetHelper.WriteInfoLog("纸张定义是："+ PlotObjectsArray[ppi - 1].CanonicalPaper + "\n");
                             //PlotObjectsArray[ppi - 1].PlotFileLocation = Convert.ToString(ppi + ".pdf");
-                            PlotObjectsArray[ppi - 1].PlotFileLocation = GetPdfname(br,tr);
+                            if(GetPdfname(br, out pdfname, tr)==true)
+                            PlotObjectsArray[ppi - 1].PlotFileLocation = pdfname;
+                            else
+                            {
+                                Log4NetHelper.WriteInfoLog("没有001属性.\n");
+                            }
 
                             SysUtil.addPdfDict(ppi - 1, PlotObjectsArray[ppi - 1].PlotFileLocation);
                            

@@ -20,6 +20,7 @@ namespace HomeDesignCad.Plot.Util
             dict.Add("A0", "ISO_full_bleed_A0_(841.00_x_1189.00_MM)");
             dict.Add("A1", "ISO_full_bleed_Al_(841.00_x_594.00_MM)");
             dict.Add("A2", "ISO_full_bleed_A2_(594.00_x_420.00_MM)");
+            
 
         }
 
