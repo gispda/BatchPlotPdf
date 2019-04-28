@@ -716,9 +716,19 @@ Db.OpenMode.ForRead) as Db.Layout;
             ymin = PltParams.MinPt.Y;
             xmax = PltParams.MaxPt.X;
             ymax = PltParams.MaxPt.Y;
-            xplus = (xmax - xmin) / (50 * PltParams.PaperScale);
-            yplus = (ymax - ymin) / (100 * PltParams.PaperScale);
 
+
+            if (PltParams.IsRotate == true)
+            {
+                xplus = (xmax - xmin) / (50 * PltParams.PaperScale);
+                yplus = (ymax - ymin) / (100 * PltParams.PaperScale);
+            }
+            else
+            {
+                xplus = (xmax - xmin) / (100 * PltParams.PaperScale);
+                yplus = (ymax - ymin) / (50 * PltParams.PaperScale);
+            
+            }
 
             extents = new Db.Extents2d(
                             xmin-xplus,
@@ -1198,6 +1208,7 @@ Db.OpenMode.ForRead) as Db.Layout;
                             if ((Math.Abs(br.Rotation - Math.PI / 2) < 0.001 || (Math.Abs(br.Rotation - Math.PI * 3 / 2) < 0.001)))
                             {
                                 Log4NetHelper.WriteInfoLog("Í¼¿òÐý×ªÁË£¡£¡£¡\n");
+                                PlotObjectsArray[ppi - 1].IsRotate = true;
                                 isfind = SysUtil.getIPaperParamsR(br.Name, out paperparams);
                             }
                             else
@@ -1362,6 +1373,13 @@ Db.OpenMode.ForRead) as Db.Layout;
         private Point3d MinPoints;
         private Point3d MaxPoints;
         private double paperScale;
+        private bool isRotate;
+
+        public bool IsRotate
+        {
+            get { return isRotate; }
+            set { isRotate = value; }
+        }
 
 
 
@@ -1385,6 +1403,7 @@ Db.OpenMode.ForRead) as Db.Layout;
             this.MinPoints = new Point3d();
             this.MaxPoints = new Point3d();
             this.paperScale = 1.0;
+            isRotate = false;
         }
         public HdCadPlotParams(string DwgPath, string DeviceName, string PaperSize, string ctbName, bool ScLw, int Cnt, Autodesk.AutoCAD.DatabaseServices.StdScaleType ScTyp, Autodesk.AutoCAD.DatabaseServices.PlotRotation PltRot, string CanonicalMedia)
         {
@@ -1400,6 +1419,7 @@ Db.OpenMode.ForRead) as Db.Layout;
             this.MinPoints = new Point3d();
             this.MaxPoints = new Point3d();
             this.paperScale = 1.0;
+            isRotate = false;
         }
 
         public string DrawingPath
