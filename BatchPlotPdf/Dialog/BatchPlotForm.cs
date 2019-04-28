@@ -605,15 +605,10 @@ Db.OpenMode.ForRead) as Db.Layout;
                     //PltSet.ScaleLineweights = PltParams.ScaleLineweight;
                     //Log4NetHelper.WriteInfoLog("iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii\n");
                     //PltSetVald.SetZoomToPaperOnUpdate(PltSet, false);
-                    extents = new Db.Extents2d(
-                                    PltParams.MinPt.X * (1 - 0.0005),
-                                    PltParams.MinPt.Y * (1 + 0.0005),
-                                    PltParams.MaxPt.X,
-                                    PltParams.MaxPt.Y
-                                  );
+                    extents = GetPlotRegion(PltParams);
 
-                    Log4NetHelper.WriteInfoLog("左上角坐标:" + PltParams.MinPt.X + "," + PltParams.MinPt.Y + "\n");
-                    Log4NetHelper.WriteInfoLog("右下角角坐标:" + PltParams.MaxPt.X + "," + PltParams.MaxPt.Y + "\n");
+                    Log4NetHelper.WriteInfoLog("左下角坐标:" + extents.MinPoint.X + "," + extents.MinPoint.Y + "\n");
+                    Log4NetHelper.WriteInfoLog("右上角角坐标:" + extents.MaxPoint.X + "," + extents.MaxPoint.Y + "\n");
                     if (PltParams.IsFindPaper == false)
                     {
 
@@ -621,70 +616,73 @@ Db.OpenMode.ForRead) as Db.Layout;
                         pcen = new Point3d(PltParams.MaxPt.X, PltParams.MinPt.Y, 0);
 
                         acCirc.Center = pcen;
-                        acCirc.Radius = 150;
+                        acCirc.Radius = 800;
                         acCirc.Color = Autodesk.AutoCAD.Colors.Color.FromRgb(255, 0, 0); ;
                         // Add the new object to the block table record and the transaction
                         btr.AppendEntity(acCirc);
 
                         tr.AddNewlyCreatedDBObject(acCirc, true);
                     }
-                    PltSetVald.SetZoomToPaperOnUpdate(PltSet, true);
+                    else
+                    {
+                        PltSetVald.SetZoomToPaperOnUpdate(PltSet, true);
 
-                    PltSetVald.SetPlotWindowArea(PltSet, extents);
-                    PltSetVald.SetPlotType(PltSet, Db.PlotType.Window);
-                    PltSetVald.SetUseStandardScale(PltSet, true);
-                    PltSetVald.SetStdScaleType(PltSet, Db.StdScaleType.ScaleToFit);
-                    PltSetVald.SetPlotCentered(PltSet, true);
-                    PltSetVald.SetPlotRotation(PltSet, Db.PlotRotation.Degrees000);
+                        PltSetVald.SetPlotWindowArea(PltSet, extents);
+                        PltSetVald.SetPlotType(PltSet, Db.PlotType.Window);
+                        PltSetVald.SetUseStandardScale(PltSet, true);
+                        PltSetVald.SetStdScaleType(PltSet, Db.StdScaleType.ScaleToFit);
+                        PltSetVald.SetPlotCentered(PltSet, true);
+                        PltSetVald.SetPlotRotation(PltSet, Db.PlotRotation.Degrees000);
 
-                    // We'll use the standard DWF PC3, as
-                    // for today we're just plotting to file
-                    PltSetVald.SetPlotConfigurationName(PltSet, PltParams.Device, PltParams.CanonicalPaper);
+                        // We'll use the standard DWF PC3, as
+                        // for today we're just plotting to file
+                        PltSetVald.SetPlotConfigurationName(PltSet, PltParams.Device, PltParams.CanonicalPaper);
 
-                    Log4NetHelper.WriteInfoLog("jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj\n");
-                    PltInfo.OverrideSettings = PltSet;
-                    Log4NetHelper.WriteInfoLog("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk\n");
-                    PlotInfoValidator PltInfoVald = new PlotInfoValidator();
-                    Log4NetHelper.WriteInfoLog("lllllllllllllllllllllllllllllllllllll\n");
-                    PltInfoVald.MediaMatchingPolicy = MatchingPolicy.MatchEnabled;
-                    Log4NetHelper.WriteInfoLog("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\n");
-                    PltInfoVald.Validate(PltInfo);
-                    Log4NetHelper.WriteInfoLog("nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn\n");
-                    PltPrgDia.OnBeginPlot();
-                    Log4NetHelper.WriteInfoLog("oooooooooooooooooooooooooooooooooooooo\n");
-                    PltPrgDia.IsVisible = true;
-                    PltEng.BeginPlot(PltPrgDia, null);
-                    Log4NetHelper.WriteInfoLog("pppppppppppppppppppppppppppppppppppppppp\n");
+                        Log4NetHelper.WriteInfoLog("jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj\n");
+                        PltInfo.OverrideSettings = PltSet;
+                        Log4NetHelper.WriteInfoLog("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk\n");
+                        PlotInfoValidator PltInfoVald = new PlotInfoValidator();
+                        Log4NetHelper.WriteInfoLog("lllllllllllllllllllllllllllllllllllll\n");
+                        PltInfoVald.MediaMatchingPolicy = MatchingPolicy.MatchEnabled;
+                        Log4NetHelper.WriteInfoLog("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\n");
+                        PltInfoVald.Validate(PltInfo);
+                        Log4NetHelper.WriteInfoLog("nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn\n");
+                        PltPrgDia.OnBeginPlot();
+                        Log4NetHelper.WriteInfoLog("oooooooooooooooooooooooooooooooooooooo\n");
+                        PltPrgDia.IsVisible = true;
+                        PltEng.BeginPlot(PltPrgDia, null);
+                        Log4NetHelper.WriteInfoLog("pppppppppppppppppppppppppppppppppppppppp\n");
 
 
-                    PltEng.BeginDocument(PltInfo, db.Filename, null, PltParams.Amount, true, PltParams.PlotFileLocation);
+                        PltEng.BeginDocument(PltInfo, db.Filename, null, PltParams.Amount, true, PltParams.PlotFileLocation);
 
-                    Log4NetHelper.WriteInfoLog("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq\n");
+                        Log4NetHelper.WriteInfoLog("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq\n");
 
-                    //if (PltParams.PlotToFile)
-                    //{
-                    //    PltEng.BeginDocument(PltInfo, db.Filename, null, PltParams.Amount, true, PltParams.PlotFileLocation);
-                    //    Log4NetHelper.WriteInfoLog("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq\n");
-                    //}
-                    //else
-                    //{
-                    //    PltEng.BeginDocument(PltInfo, db.Filename, null, PltParams.Amount, false, string.Empty);
-                    //    Log4NetHelper.WriteInfoLog("rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\n");
-                    //}
-                    PltEng.BeginPage(PltPgInfo, PltInfo, true, null);
-                    Log4NetHelper.WriteInfoLog("ssssssssssssssssssssssssssssssssssssssss\n");
-                    PltEng.BeginGenerateGraphics(null);
-                    Log4NetHelper.WriteInfoLog("ttttttttttttttttttttttttttttttttttttttttt\n");
-                    PltEng.EndGenerateGraphics(null);
-                    Log4NetHelper.WriteInfoLog("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu\n");
-                    PltEng.EndPage(null);
-                    Log4NetHelper.WriteInfoLog("vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv\n");
-                    PltEng.EndDocument(null);
-                    Log4NetHelper.WriteInfoLog("wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww\n");
-                    PltEng.EndPlot(null);
-                    Log4NetHelper.WriteInfoLog("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n");
-                    PltPrgDia.OnEndPlot();
-                    Log4NetHelper.WriteInfoLog("yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy\n");
+                        //if (PltParams.PlotToFile)
+                        //{
+                        //    PltEng.BeginDocument(PltInfo, db.Filename, null, PltParams.Amount, true, PltParams.PlotFileLocation);
+                        //    Log4NetHelper.WriteInfoLog("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq\n");
+                        //}
+                        //else
+                        //{
+                        //    PltEng.BeginDocument(PltInfo, db.Filename, null, PltParams.Amount, false, string.Empty);
+                        //    Log4NetHelper.WriteInfoLog("rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\n");
+                        //}
+                        PltEng.BeginPage(PltPgInfo, PltInfo, true, null);
+                        Log4NetHelper.WriteInfoLog("ssssssssssssssssssssssssssssssssssssssss\n");
+                        PltEng.BeginGenerateGraphics(null);
+                        Log4NetHelper.WriteInfoLog("ttttttttttttttttttttttttttttttttttttttttt\n");
+                        PltEng.EndGenerateGraphics(null);
+                        Log4NetHelper.WriteInfoLog("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu\n");
+                        PltEng.EndPage(null);
+                        Log4NetHelper.WriteInfoLog("vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv\n");
+                        PltEng.EndDocument(null);
+                        Log4NetHelper.WriteInfoLog("wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww\n");
+                        PltEng.EndPlot(null);
+                        Log4NetHelper.WriteInfoLog("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n");
+                        PltPrgDia.OnEndPlot();
+                        Log4NetHelper.WriteInfoLog("yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy\n");
+                    }
                 }
                 catch (Autodesk.AutoCAD.Runtime.Exception AcadEr)
                 {
@@ -707,6 +705,29 @@ Db.OpenMode.ForRead) as Db.Layout;
                 tr.Commit();
             }
 		}
+
+        private Extents2d GetPlotRegion(HdCadPlotParams PltParams)
+        {
+            Db.Extents2d extents;
+
+            double xmin, ymin, xmax, ymax;
+            double xplus, yplus;
+            xmin = PltParams.MinPt.X;
+            ymin = PltParams.MinPt.Y;
+            xmax = PltParams.MaxPt.X;
+            ymax = PltParams.MaxPt.Y;
+            xplus = (xmax - xmin) / (50 * PltParams.PaperScale);
+            yplus = (ymax - ymin) / (100 * PltParams.PaperScale);
+
+
+            extents = new Db.Extents2d(
+                            xmin-xplus,
+                            ymin-yplus,
+                            xmax,
+                            ymax
+                          );
+            return extents;
+        }
 		
 		[CommandMethod("MyBPlot", CommandFlags.Session)]
 		public void MethodCall () {
@@ -1049,7 +1070,8 @@ Db.OpenMode.ForRead) as Db.Layout;
 
             SysUtil.clearPdfDict();
 
-
+            string avalue = null;
+            double pscale = 1;
             Transaction tr =
 
               db.TransactionManager.StartTransaction();     
@@ -1096,7 +1118,7 @@ Db.OpenMode.ForRead) as Db.Layout;
                             //Log4NetHelper.WriteInfoLog("PromptStatus.OK" + PromptStatus.OK);
                             if (res.Status != PromptStatus.OK)
                                 return;
-                            Log4NetHelper.WriteInfoLog("选择的实体状态不正常\n");
+                           // Log4NetHelper.WriteInfoLog("选择的实体状态不正常\n");
                        
                         SelectionSet sset = res.Value;
 
@@ -1111,7 +1133,7 @@ Db.OpenMode.ForRead) as Db.Layout;
                         BlockReference br = null;
                         string svalue = null;
 
-                        SelectionSet bset;
+                        //SelectionSet bset;
 
                         ObjectId[] objids = sset.GetObjectIds();
 
@@ -1158,9 +1180,12 @@ Db.OpenMode.ForRead) as Db.Layout;
 
                             ppi=ppi+1;
 
-                            Log4NetHelper.WriteInfoLog("bbbb1111111111111111111111111111\n");
+                            
                             // ed.WriteMessage("\nhas data");
                             br = GetBlockReference(obj, tr);
+
+
+                          
                            // hacadpp = new HdCadPlotParams();
                             PlotObjectsArray[ppi - 1] = new HdCadPlotParams();
                             PlotObjectsArray[ppi-1].MinPt = br.GeometricExtents.MinPoint;
@@ -1169,9 +1194,20 @@ Db.OpenMode.ForRead) as Db.Layout;
                             PlotObjectsArray[ppi - 1].MaxPt = br.GeometricExtents.MaxPoint;
                             PlotObjectsArray[ppi - 1].Device = "DWG To PDF.pc3";
                             PlotObjectsArray[ppi - 1].ctbFile = "acad_幕墙.ctb";
-                            isfind = SysUtil.getIPaperParams(br.Name,out paperparams);
+
+                            if ((Math.Abs(br.Rotation - Math.PI / 2) < 0.001 || (Math.Abs(br.Rotation - Math.PI * 3 / 2) < 0.001)))
+                            {
+                                Log4NetHelper.WriteInfoLog("图框旋转了！！！\n");
+                                isfind = SysUtil.getIPaperParamsR(br.Name, out paperparams);
+                            }
+                            else
+                                isfind = SysUtil.getIPaperParams(br.Name, out paperparams);
+                            Log4NetHelper.WriteInfoLog("图框的旋转角度是" + br.Rotation + "\n");
+
+                            
 
                             PlotObjectsArray[ppi - 1].CanonicalPaper = paperparams;
+                            Log4NetHelper.WriteInfoLog("图框纸张尺寸是"+PlotObjectsArray[ppi - 1].CanonicalPaper+"\n");
                             if (isfind == false)
                             {
                                 //acCirc = new Circle();
@@ -1192,7 +1228,17 @@ Db.OpenMode.ForRead) as Db.Layout;
                             {
                                 Log4NetHelper.WriteInfoLog("没有001属性.\n");
                             }
+                              avalue = GetBlockAttribute(br, "比例", tr);
+                              if (avalue != null)
+                              {
+                                  string[] arr = System.Text.RegularExpressions.Regex.Split(avalue, ":");
+                                  Log4NetHelper.WriteInfoLog("比例尺是"+ arr[arr.Length-1]+"\n");
+                                  pscale = Convert.ToDouble(arr[arr.Length-1]);
 
+                                  PlotObjectsArray[ppi - 1].PaperScale = pscale;
+                              }
+                              else
+                                  Log4NetHelper.WriteInfoLog("没有比例属性.\n");
                             SysUtil.addPdfDict(ppi - 1, PlotObjectsArray[ppi - 1].PlotFileLocation);
                            
                            // PlotObjectsArray[ii - 1] = hacadpp;
@@ -1315,6 +1361,18 @@ Db.OpenMode.ForRead) as Db.Layout;
         private string[] LoNames;
         private Point3d MinPoints;
         private Point3d MaxPoints;
+        private double paperScale;
+
+
+
+        /// <summary>
+        /// 1:20 记录为20
+        /// </summary>
+        public double PaperScale
+        {
+            get { return paperScale; }
+            set { paperScale = value; }
+        }
         private bool IsFind;
 
         public bool IsFindPaper
@@ -1326,6 +1384,7 @@ Db.OpenMode.ForRead) as Db.Layout;
         public HdCadPlotParams() {
             this.MinPoints = new Point3d();
             this.MaxPoints = new Point3d();
+            this.paperScale = 1.0;
         }
         public HdCadPlotParams(string DwgPath, string DeviceName, string PaperSize, string ctbName, bool ScLw, int Cnt, Autodesk.AutoCAD.DatabaseServices.StdScaleType ScTyp, Autodesk.AutoCAD.DatabaseServices.PlotRotation PltRot, string CanonicalMedia)
         {
@@ -1340,6 +1399,7 @@ Db.OpenMode.ForRead) as Db.Layout;
             this.CanonicalPaperName = CanonicalMedia;
             this.MinPoints = new Point3d();
             this.MaxPoints = new Point3d();
+            this.paperScale = 1.0;
         }
 
         public string DrawingPath

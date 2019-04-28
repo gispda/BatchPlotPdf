@@ -7,6 +7,7 @@ namespace HomeDesignCad.Plot.Util
     class SysUtil
     {
         private static Dictionary<string, string> dict = new Dictionary<string, string>();
+        private static Dictionary<string, string> rdict = new Dictionary<string, string>();
         private static Dictionary<int, string> pdfdict = new Dictionary<int, string>();
         public static string getCfgPath()
         {
@@ -20,7 +21,9 @@ namespace HomeDesignCad.Plot.Util
             dict.Add("A0", "ISO_full_bleed_A0_(841.00_x_1189.00_MM)");
             dict.Add("A1", "ISO_full_bleed_Al_(841.00_x_594.00_MM)");
             dict.Add("A2", "ISO_full_bleed_A2_(594.00_x_420.00_MM)");
-            
+            rdict.Add("A0", "ISO_full_bleed_A0_(1189.00_x_841.00_MM)");
+            rdict.Add("A1", "ISO_full_bleed_Al_(594.00_x_841.00_MM)");
+            rdict.Add("A2", "ISO_full_bleed_A2_(420.00_x_594.00_MM)");
 
         }
 
@@ -69,6 +72,7 @@ namespace HomeDesignCad.Plot.Util
 
             try
             {
+              
                 Log4NetHelper.WriteInfoLog("找到key:" + bkname + ":"+dict[bkname]+"\n");
                 paperparams = dict[bkname];
                 isfind = true;
@@ -80,6 +84,31 @@ namespace HomeDesignCad.Plot.Util
                 Log4NetHelper.WriteInfoLog("没有找到key:" + bkname+"\n");
                 paperparams = "ISO_full_bleed_A2_(594.00_x_420.00_MM)";
                
+            }
+            return isfind;
+        }
+
+        public static bool getIPaperParamsR(string bkname, out string paperparams)
+        {
+            bool isfind = false;
+            if (rdict.Count == 0)
+                buildDict();
+
+
+            try
+            {
+
+                Log4NetHelper.WriteInfoLog("找到key:" + bkname + ":" + rdict[bkname] + "\n");
+                paperparams = rdict[bkname];
+                isfind = true;
+
+            }
+            catch (Exception ex)
+            {
+
+                Log4NetHelper.WriteInfoLog("没有找到key:" + bkname + "\n");
+                paperparams = "ISO_full_bleed_A2_(594.00_x_420.00_MM)";
+
             }
             return isfind;
         }
