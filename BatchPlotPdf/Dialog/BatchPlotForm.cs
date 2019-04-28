@@ -101,6 +101,7 @@ namespace HomeDesignCad.Plot.Dialog
             this.SelLoCkbox = new System.Windows.Forms.CheckBox();
             this.Lo1Ckbox = new System.Windows.Forms.CheckBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnapply = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.tbpdfname = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
@@ -109,7 +110,6 @@ namespace HomeDesignCad.Plot.Dialog
             this.tbprogname = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.cmbprogtype = new System.Windows.Forms.ComboBox();
-            this.btnapply = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -273,6 +273,19 @@ namespace HomeDesignCad.Plot.Dialog
             this.panel1.Size = new System.Drawing.Size(529, 380);
             this.panel1.TabIndex = 12;
             // 
+            // btnapply
+            // 
+            this.btnapply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnapply.BackColor = System.Drawing.Color.Silver;
+            this.btnapply.ForeColor = System.Drawing.Color.Navy;
+            this.btnapply.Location = new System.Drawing.Point(28, 251);
+            this.btnapply.Name = "btnapply";
+            this.btnapply.Size = new System.Drawing.Size(93, 25);
+            this.btnapply.TabIndex = 11;
+            this.btnapply.Text = "应用";
+            this.btnapply.UseVisualStyleBackColor = false;
+            this.btnapply.Click += new System.EventHandler(this.btnapply_Click);
+            // 
             // groupBox4
             // 
             this.groupBox4.Controls.Add(this.tbpdfname);
@@ -351,19 +364,6 @@ namespace HomeDesignCad.Plot.Dialog
             this.cmbprogtype.Size = new System.Drawing.Size(453, 20);
             this.cmbprogtype.TabIndex = 0;
             this.cmbprogtype.Text = "幕施";
-            // 
-            // btnapply
-            // 
-            this.btnapply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnapply.BackColor = System.Drawing.Color.Silver;
-            this.btnapply.ForeColor = System.Drawing.Color.Navy;
-            this.btnapply.Location = new System.Drawing.Point(28, 251);
-            this.btnapply.Name = "btnapply";
-            this.btnapply.Size = new System.Drawing.Size(93, 25);
-            this.btnapply.TabIndex = 11;
-            this.btnapply.Text = "应用";
-            this.btnapply.UseVisualStyleBackColor = false;
-            this.btnapply.Click += new System.EventHandler(this.btnapply_Click);
             // 
             // BatchPlotForm
             // 
@@ -725,7 +725,7 @@ Db.OpenMode.ForRead) as Db.Layout;
             }
             else
             {
-                xplus = (xmax - xmin) / (100 * PltParams.PaperScale);
+                xplus = (xmax - xmin) / (70 * PltParams.PaperScale);
                 yplus = (ymax - ymin) / (50 * PltParams.PaperScale);
             
             }
