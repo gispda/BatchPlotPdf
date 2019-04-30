@@ -611,7 +611,7 @@ Db.OpenMode.ForRead) as Db.Layout;
                     Log4NetHelper.WriteInfoLog("右上角角坐标:" + extents.MaxPoint.X + "," + extents.MaxPoint.Y + "\n");
                     if (PltParams.IsFindPaper == false)
                     {
-
+                        Log4NetHelper.WriteInfoLog("开始画红色圆\n");
                         acCirc = new Circle();
                         pcen = new Point3d(PltParams.MaxPt.X, PltParams.MinPt.Y, 0);
 
@@ -625,17 +625,26 @@ Db.OpenMode.ForRead) as Db.Layout;
                     }
                     else
                     {
+                        Log4NetHelper.WriteInfoLog("开始准备打印参数\n");
                         PltSetVald.SetZoomToPaperOnUpdate(PltSet, true);
-
+                        Log4NetHelper.WriteInfoLog("开始准备打印参数111111111111\n");
                         PltSetVald.SetPlotWindowArea(PltSet, extents);
+                        Log4NetHelper.WriteInfoLog("开始准备打印参数22222222222222\n");
                         PltSetVald.SetPlotType(PltSet, Db.PlotType.Window);
+                        Log4NetHelper.WriteInfoLog("开始准备打印参数3333333333333333\n");
                         PltSetVald.SetUseStandardScale(PltSet, true);
+                        Log4NetHelper.WriteInfoLog("开始准备打印参数4444444444444444\n");
                         PltSetVald.SetStdScaleType(PltSet, Db.StdScaleType.ScaleToFit);
+                        Log4NetHelper.WriteInfoLog("开始准备打印参数555555555555555555555555\n");
                         PltSetVald.SetPlotCentered(PltSet, true);
+                        Log4NetHelper.WriteInfoLog("开始准备打印参数666666666666666666\n");
                         PltSetVald.SetPlotRotation(PltSet, Db.PlotRotation.Degrees000);
-
+                        Log4NetHelper.WriteInfoLog("开始准备打印参数77777777777777777\n");
                         // We'll use the standard DWF PC3, as
                         // for today we're just plotting to file
+                        Log4NetHelper.WriteInfoLog("Device is "+ PltParams.Device+ "\n");
+                        Log4NetHelper.WriteInfoLog("CanonicalPaper is " + PltParams.CanonicalPaper + "\n");
+
                         PltSetVald.SetPlotConfigurationName(PltSet, PltParams.Device, PltParams.CanonicalPaper);
 
                         Log4NetHelper.WriteInfoLog("jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj\n");
@@ -1087,6 +1096,7 @@ Db.OpenMode.ForRead) as Db.Layout;
               db.TransactionManager.StartTransaction();     
 
             //var ed = cad.DocumentManager.MdiActiveDocument.Editor;
+            Extents3d extents;
             using (var eduserinteraction = ed.StartUserInteraction(this.Handle))
             {
                 string blockName = "k1";
@@ -1190,21 +1200,46 @@ Db.OpenMode.ForRead) as Db.Layout;
 
                             ppi=ppi+1;
 
-                            
+                           
                             // ed.WriteMessage("\nhas data");
                             br = GetBlockReference(obj, tr);
 
 
-                          
+                   
                            // hacadpp = new HdCadPlotParams();
                             PlotObjectsArray[ppi - 1] = new HdCadPlotParams();
-                            PlotObjectsArray[ppi-1].MinPt = br.GeometricExtents.MinPoint;
-                            //hacadpp.MinPt = br.GeometricExtents.MinPoint.Y * (1 - 0.0001);
+                            Log4NetHelper.WriteInfoLog("22222222222222sdfdsfsdfsdfsdf\n");
+                           
+                            //Log4NetHelper.WriteInfoLog(br+"\n");
 
-                            PlotObjectsArray[ppi - 1].MaxPt = br.GeometricExtents.MaxPoint;
+
+                            //try
+                            //{
+
+                            //    extents = br.GeometricExtents;
+                            //    //PlotObjectsArray[ppi - 1].MinPt = br.GeometricExtents.MinPoint;
+                            //    ////hacadpp.MinPt = br.GeometricExtents.MinPoint.Y * (1 - 0.0001);
+                            //    //Log4NetHelper.WriteInfoLog(br.GeometricExtents.MinPoint + "\n");
+
+                            //    //PlotObjectsArray[ppi - 1].MaxPt = br.GeometricExtents.MaxPoint;
+                            //    //Log4NetHelper.WriteInfoLog(br.GeometricExtents.MaxPoint + "\n");
+                            //}
+                            //catch (Autodesk.AutoCAD.Runtime.Exception ex)
+                            //{
+                              
+                            //}
+                            extents = br.GeometryExtentsBestFit();
+
+                             PlotObjectsArray[ppi - 1].MinPt = extents.MinPoint;
+                             PlotObjectsArray[ppi - 1].MaxPt = extents.MaxPoint;
+
+                            
+
+                            Log4NetHelper.WriteInfoLog("333333333333333333333333sfsdfdsfsfds\n");
                             PlotObjectsArray[ppi - 1].Device = "DWG To PDF.pc3";
                             PlotObjectsArray[ppi - 1].ctbFile = "acad_幕墙.ctb";
-
+                            Log4NetHelper.WriteInfoLog(br.Name + "\n");
+                            Log4NetHelper.WriteInfoLog(PlotObjectsArray[ppi - 1].Device+"\n");
                             if ((Math.Abs(br.Rotation - Math.PI / 2) < 0.001 || (Math.Abs(br.Rotation - Math.PI * 3 / 2) < 0.001)))
                             {
                                 Log4NetHelper.WriteInfoLog("图框旋转了！！！\n");
