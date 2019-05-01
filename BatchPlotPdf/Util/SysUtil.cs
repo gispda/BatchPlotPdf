@@ -18,41 +18,41 @@ namespace HomeDesignCad.Plot.Util
         }
         public static void buildDict()
         {
-            dict.Add("A0", "ISO_full_bleed_A0_(841.00_x_1189.00_MM)");
-            dict.Add("A01", "A01 (841.00 x 1486.00 MM)");
-            dict.Add("A02", "A02 (841.00 x 1784.00 MM)");
-            dict.Add("A03", "A03 (841.00 x 2081.00 MM)");
-            dict.Add("A04", "A04 (841.00 x 2378.00 MM)");
+            rdict.Add("A0", "ISO_full_bleed_A0_(841.00_x_1189.00_MM)");
+            rdict.Add("A01", "UserDefinedMetric (841.00 x 1486.00毫米)");
+            rdict.Add("A02", "UserDefinedMetric (841.00 x 1784.00毫米)");
+            rdict.Add("A03", "UserDefinedMetric (841.00 x 2081.00毫米)");
+            rdict.Add("A04", "UserDefinedMetric (841.00 x 2378.00毫米)");
           
 
-            dict.Add("A1", "ISO_full_bleed_Al_(841.00_x_594.00_MM)");
-            dict.Add("A11", "A11 (594.00 x 1051.00 MM)");
-            dict.Add("A12", "A12 (594.00 x 1262.00 MM)");
-            dict.Add("A13", "A13 (594.00 x 1472.00 MM)");
-            dict.Add("A14", "A14 (594.00 x 1682.00 MM)");
+            rdict.Add("A1", "ISO_full_bleed_Al_(841.00_x_594.00_MM)");
+            rdict.Add("A11", "UserDefinedMetric (594.00 x 1051.00毫米)");
+            rdict.Add("A12", "UserDefinedMetric (594.00 x 1262.00毫米)");
+            rdict.Add("A13", "UserDefinedMetric (594.00 x 1472.00毫米)");
+            rdict.Add("A14", "UserDefinedMetric (594.00 x 1682.00毫米)");
 
-            dict.Add("A2", "ISO_full_bleed_A2_(594.00_x_420.00_MM)");
-            dict.Add("A21", "A21 (420.00 x 743.00 MM)");
-            dict.Add("A22", "A22 (420.00 x 891.00 MM)");
-            dict.Add("A23", "A23 (420.00 x 1040.00 MM)");
-            dict.Add("A24", "A24 (420.00 x 1188.00 MM)");
+            rdict.Add("A2", "ISO_full_bleed_A2_(594.00_x_420.00_MM)");
+            rdict.Add("A21", "UserDefinedMetric (420.00 x 743.00毫米)");
+            rdict.Add("A22", "UserDefinedMetric (420.00 x 891.00毫米)");
+            rdict.Add("A23", "UserDefinedMetric (420.00 x 1040.00毫米)");
+            rdict.Add("A24", "UserDefinedMetric (420.00 x 1188.00毫米)");
 
-            rdict.Add("A0", "ISO_full_bleed_A0_(1189.00_x_841.00_MM)");
-            rdict.Add("A01", "A01 (1486.00 x 841.00 MM)");
-            rdict.Add("A02", "A02 (1784.00 x 841.00 MM)");
-            rdict.Add("A03", "A03 (2081.00 x 841.00 MM)");
-            rdict.Add("A04", "A04 (2378.00 x 841.00 MM)");
+            dict.Add("A0", "ISO_full_bleed_A0_(1189.00_x_841.00_MM)");
+            dict.Add("A01", "UserDefinedMetric (1486.00 x 841.00毫米)");
+            dict.Add("A02", "UserDefinedMetric (1784.00 x 841.00毫米)");
+            dict.Add("A03", "UserDefinedMetric (2081.00 x 841.00毫米)");
+            dict.Add("A04", "UserDefinedMetric (2378.00 x 841.00毫米)");
 
-            rdict.Add("A1", "ISO_full_bleed_Al_(594.00_x_841.00_MM)");
-            rdict.Add("A11", "A11 (1051.00 x 594.00 MM)");
-            rdict.Add("A12", "A12 (1262.00 x 594.00 MM)");
-            rdict.Add("A13", "A13 (1472.00 x 594.00 MM)");
-            rdict.Add("A14", "A14 (1682.00 x 594.00 MM)");
-            rdict.Add("A2", "ISO_full_bleed_A2_(420.00_x_594.00_MM)");
-            rdict.Add("A21", "A21 (743.00 x 420.00 MM)");
-            rdict.Add("A22", "A22 (891.00 x 420.00 MM)");
-            rdict.Add("A23", "A23 (1040.00 x 420.00 MM)");
-            rdict.Add("A24", "A24 (1188.00 x 420.00 MM)");
+            dict.Add("A1", "ISO_full_bleed_Al_(594.00_x_841.00_MM)");
+            dict.Add("A11", "UserDefinedMetric (1051.00 x 594.00毫米)");
+            dict.Add("A12", "UserDefinedMetric (1262.00 x 594.00毫米)");
+            dict.Add("A13", "UserDefinedMetric (1472.00 x 594.00毫米)");
+            dict.Add("A14", "UserDefinedMetric (1682.00 x 594.00毫米)");
+            dict.Add("A2", "ISO_full_bleed_A2_(420.00_x_594.00_MM)");
+            dict.Add("A21", "UserDefinedMetric (743.00 x 420.00毫米)");
+            dict.Add("A22", "UserDefinedMetric (891.00 x 420.00毫米)");
+            dict.Add("A23", "UserDefinedMetric (1040.00 x 420.00毫米)");
+            dict.Add("A24", "UserDefinedMetric (1188.00 x 420.00毫米)");
 
         }
 

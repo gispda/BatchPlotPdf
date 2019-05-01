@@ -96,7 +96,7 @@ namespace HomeDesignCad.Plot.Cmd
         // context menu.
 
         // Modal Command with localized name
-        [CommandMethod("BPlotGroup", "Baplot", "BpCommandLocal", CommandFlags.Modal| CommandFlags.UsePickSet)]
+        //[CommandMethod("Mlot", CommandFlags.Session)]
         public void RunBatchPlot() // This method can have any name
         {
            // BatchPlotForm batchplotform = new BatchPlotForm();
@@ -122,7 +122,7 @@ namespace HomeDesignCad.Plot.Cmd
             Transaction tr =
 
               db.TransactionManager.StartTransaction();
-            string blockName = "k1";
+            string blockName = "A01";
             TypedValue[] tvs = new TypedValue[] {new TypedValue(0, "INSERT"),new TypedValue(2, blockName)};
             SelectionFilter sf = new SelectionFilter(tvs);
 
@@ -173,7 +173,7 @@ namespace HomeDesignCad.Plot.Cmd
                         //Log4NetHelper.WriteInfoLog("***********************\n");
                         //Log4NetHelper.WriteInfoLog("-----------------------------\n");
                         PlotOnePaper(db, doc, br, "DWG To PDF.pc3",
-                  "ISO_A4_(210.00_x_297.00_MM)", "111.pdf");
+                  "A01 (1486.00 x 841.00 MM)", "111.pdf");
 
 
                     }
@@ -237,7 +237,7 @@ namespace HomeDesignCad.Plot.Cmd
 
 
                        
-                        Db.Extents3d extends = br.GeometricExtents;
+                        Db.Extents3d extends = br.GeometryExtentsBestFit();
                         Point3d pmin = extends.MinPoint;
                         Point3d pmax = extends.MaxPoint;
 
@@ -501,7 +501,7 @@ namespace HomeDesignCad.Plot.Cmd
 
                   "DWG To PDF.pc3",
 
-                  "ANSI_A_(8.50_x_11.00_Inches)"
+                  "A01 (1486.00 x 841.00 MM)"
 
                 );
 

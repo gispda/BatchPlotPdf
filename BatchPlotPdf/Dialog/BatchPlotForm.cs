@@ -572,19 +572,29 @@ Db.OpenMode.ForRead) as Db.Layout;
                 PlotPageInfo PltPgInfo = new PlotPageInfo();
                 PlotProgressDialog PltPrgDia = new PlotProgressDialog(false, 1, true);
                 PlotEngine PltEng = PlotFactory.CreatePublishEngine();
-                PCM.SetCurrentConfig(PltParams.Device);
-                PCM.RefreshList(RefreshCode.All);
+               // PCM.SetCurrentConfig(PltParams.Device);
+               
                 PlotConfig pc = PCM.SetCurrentConfig(PltParams.Device);
+                PCM.RefreshList(RefreshCode.All);
                 try
                 {
 
 
                     /////////////////
                     Log4NetHelper.WriteInfoLog("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n");
+
+
+                    //PlotConfigManager.RefreshList(RefreshCode.RefreshDevicesList);
+                    //foreach(PlotConfigInfo pd in PlotConfigManager.Devices)
+                    //{
+                    //    Log4NetHelper.WriteInfoLog("\n"+pd.DeviceType+":"+pd.DeviceName+","+":"+pd.FullPath);
+                    //}
                     //PltSetVald.RefreshLists(PltSet);
                     //Log4NetHelper.WriteInfoLog("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\n");
                     //PltSetVald.SetCurrentStyleSheet(PltSet, PltParams.ctbFile);
                     PltSetVald.SetCurrentStyleSheet(layout, PltParams.ctbFile);
+                    //PltSetVald.SetCanonicalMediaName
+                        
                     //Log4NetHelper.WriteInfoLog("ccccccccccccccccccccccccccccccccc\n");
                     //PltSetVald.SetPlotOrigin(PltSet, new Point2d(0.0, 0.0));
                     //PltSetVald.SetPlotPaperUnits(PltSet, PlotPaperUnit.Millimeters);
@@ -627,28 +637,42 @@ Db.OpenMode.ForRead) as Db.Layout;
                     {
                         Log4NetHelper.WriteInfoLog("开始准备打印参数\n");
                         PltSetVald.SetZoomToPaperOnUpdate(PltSet, true);
-                        Log4NetHelper.WriteInfoLog("开始准备打印参数111111111111\n");
+                       // Log4NetHelper.WriteInfoLog("开始准备打印参数111111111111\n");
                         PltSetVald.SetPlotWindowArea(PltSet, extents);
-                        Log4NetHelper.WriteInfoLog("开始准备打印参数22222222222222\n");
+                      ///  Log4NetHelper.WriteInfoLog("开始准备打印参数22222222222222\n");
                         PltSetVald.SetPlotType(PltSet, Db.PlotType.Window);
-                        Log4NetHelper.WriteInfoLog("开始准备打印参数3333333333333333\n");
+                     //   Log4NetHelper.WriteInfoLog("开始准备打印参数3333333333333333\n");
                         PltSetVald.SetUseStandardScale(PltSet, true);
-                        Log4NetHelper.WriteInfoLog("开始准备打印参数4444444444444444\n");
+                    //    Log4NetHelper.WriteInfoLog("开始准备打印参数4444444444444444\n");
                         PltSetVald.SetStdScaleType(PltSet, Db.StdScaleType.ScaleToFit);
-                        Log4NetHelper.WriteInfoLog("开始准备打印参数555555555555555555555555\n");
+                    //    Log4NetHelper.WriteInfoLog("开始准备打印参数555555555555555555555555\n");
                         PltSetVald.SetPlotCentered(PltSet, true);
-                        Log4NetHelper.WriteInfoLog("开始准备打印参数666666666666666666\n");
+                    //    Log4NetHelper.WriteInfoLog("开始准备打印参数666666666666666666\n");
                         PltSetVald.SetPlotRotation(PltSet, Db.PlotRotation.Degrees000);
-                        Log4NetHelper.WriteInfoLog("开始准备打印参数77777777777777777\n");
+                     //   Log4NetHelper.WriteInfoLog("开始准备打印参数77777777777777777\n");
                         // We'll use the standard DWF PC3, as
                         // for today we're just plotting to file
                         Log4NetHelper.WriteInfoLog("Device is "+ PltParams.Device+ "\n");
                         Log4NetHelper.WriteInfoLog("CanonicalPaper is " + PltParams.CanonicalPaper + "\n");
 
+                        PltSetVald.SetPlotConfigurationName(PltSet, PltParams.Device, null);
+                        PltSetVald.RefreshLists(PltSet);
+
+
+                        //StringCollection sl = PltSetVald.GetCanonicalMediaNameList(PltSet);
+
+                        //foreach (string s in sl)
+                        //{
+                        //    Log4NetHelper.WriteInfoLog("开始准备打印参数"+s+"\n");
+                           
+                        //}
+
                         PltSetVald.SetPlotConfigurationName(PltSet, PltParams.Device, PltParams.CanonicalPaper);
 
                         Log4NetHelper.WriteInfoLog("jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj\n");
                         PltInfo.OverrideSettings = PltSet;
+                        PltInfo.DeviceOverride = pc;
+                    
                         Log4NetHelper.WriteInfoLog("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk\n");
                         PlotInfoValidator PltInfoVald = new PlotInfoValidator();
                         Log4NetHelper.WriteInfoLog("lllllllllllllllllllllllllllllllllllll\n");
