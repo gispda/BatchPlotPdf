@@ -77,7 +77,8 @@ namespace HomeDesignCad.Plot.Cmd
         // Ф初始化函数（在加载插件时执行）.
         public void Initialize()
         {
-            Log4NetHelper.InitLog4Net(SysUtil.getCfgPath() + "log4net.config");
+           // Log4NetHelper.InitLog4Net(PdfUtil.getCfgPath() + "log4net.config");
+            Log4NetHelper.InitLog4Net("log4net.config");
         }
 
         // Ф加载插件时执行的函数.

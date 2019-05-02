@@ -23,6 +23,7 @@ using Us = Autodesk.AutoCAD.DatabaseServices.SymbolUtilityServices;
 using PCM = Autodesk.AutoCAD.PlottingServices.PlotConfigManager;
 using HomeDesignCad.Plot.Util;
 using System.Text;
+using Sys = System.Windows.Forms;
 
 [assembly: CommandClass(typeof(HomeDesignCad.Plot.Dialog.BatchPlotForm))]
 
@@ -64,6 +65,9 @@ namespace HomeDesignCad.Plot.Dialog
         private Button btnapply;
 
         private int papercount;
+        private Button btnDir;
+        private TextBox tbplotdir;
+        private FolderBrowserDialog folderPlotDlg;
   
 		private string PlotDate = DateTime.Now.Date.ToShortDateString();
 		public BatchPlotForm()
@@ -73,7 +77,7 @@ namespace HomeDesignCad.Plot.Dialog
 			//
 			InitializeComponent();
             papercount = 0;
-
+        
            
 			//
 			// TODO: Add constructor code after the InitializeComponent() call.
@@ -101,6 +105,8 @@ namespace HomeDesignCad.Plot.Dialog
             this.SelLoCkbox = new System.Windows.Forms.CheckBox();
             this.Lo1Ckbox = new System.Windows.Forms.CheckBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.tbplotdir = new System.Windows.Forms.TextBox();
+            this.btnDir = new System.Windows.Forms.Button();
             this.btnapply = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.tbpdfname = new System.Windows.Forms.TextBox();
@@ -110,6 +116,7 @@ namespace HomeDesignCad.Plot.Dialog
             this.tbprogname = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.cmbprogtype = new System.Windows.Forms.ComboBox();
+            this.folderPlotDlg = new System.Windows.Forms.FolderBrowserDialog();
             this.panel1.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -123,7 +130,7 @@ namespace HomeDesignCad.Plot.Dialog
             this.CancelBtn.BackColor = System.Drawing.Color.Silver;
             this.CancelBtn.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.CancelBtn.ForeColor = System.Drawing.Color.Navy;
-            this.CancelBtn.Location = new System.Drawing.Point(659, 399);
+            this.CancelBtn.Location = new System.Drawing.Point(722, 399);
             this.CancelBtn.Name = "CancelBtn";
             this.CancelBtn.Size = new System.Drawing.Size(90, 25);
             this.CancelBtn.TabIndex = 3;
@@ -144,8 +151,9 @@ namespace HomeDesignCad.Plot.Dialog
             this.PlotBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.PlotBtn.BackColor = System.Drawing.Color.Silver;
             this.PlotBtn.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.PlotBtn.Enabled = false;
             this.PlotBtn.ForeColor = System.Drawing.Color.Navy;
-            this.PlotBtn.Location = new System.Drawing.Point(498, 399);
+            this.PlotBtn.Location = new System.Drawing.Point(566, 399);
             this.PlotBtn.Name = "PlotBtn";
             this.PlotBtn.Size = new System.Drawing.Size(90, 25);
             this.PlotBtn.TabIndex = 3;
@@ -157,8 +165,9 @@ namespace HomeDesignCad.Plot.Dialog
             // 
             this.btnPickdrawing.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnPickdrawing.BackColor = System.Drawing.Color.Silver;
+            this.btnPickdrawing.Enabled = false;
             this.btnPickdrawing.ForeColor = System.Drawing.Color.Navy;
-            this.btnPickdrawing.Location = new System.Drawing.Point(309, 399);
+            this.btnPickdrawing.Location = new System.Drawing.Point(329, 399);
             this.btnPickdrawing.Name = "btnPickdrawing";
             this.btnPickdrawing.Size = new System.Drawing.Size(150, 25);
             this.btnPickdrawing.TabIndex = 10;
@@ -263,6 +272,8 @@ namespace HomeDesignCad.Plot.Dialog
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.tbplotdir);
+            this.panel1.Controls.Add(this.btnDir);
             this.panel1.Controls.Add(this.btnapply);
             this.panel1.Controls.Add(this.groupBox4);
             this.panel1.Controls.Add(this.groupBox3);
@@ -272,6 +283,28 @@ namespace HomeDesignCad.Plot.Dialog
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(529, 380);
             this.panel1.TabIndex = 12;
+            // 
+            // tbplotdir
+            // 
+            this.tbplotdir.Location = new System.Drawing.Point(149, 338);
+            this.tbplotdir.Name = "tbplotdir";
+            this.tbplotdir.Size = new System.Drawing.Size(363, 21);
+            this.tbplotdir.TabIndex = 13;
+            this.tbplotdir.ModifiedChanged += new System.EventHandler(this.tbplotdir_ModifiedChanged);
+            this.tbplotdir.TextChanged += new System.EventHandler(this.tbplotdir_TextChanged);
+            // 
+            // btnDir
+            // 
+            this.btnDir.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDir.BackColor = System.Drawing.Color.Silver;
+            this.btnDir.ForeColor = System.Drawing.Color.Navy;
+            this.btnDir.Location = new System.Drawing.Point(28, 338);
+            this.btnDir.Name = "btnDir";
+            this.btnDir.Size = new System.Drawing.Size(90, 25);
+            this.btnDir.TabIndex = 12;
+            this.btnDir.Text = "选择保存目录";
+            this.btnDir.UseVisualStyleBackColor = false;
+            this.btnDir.Click += new System.EventHandler(this.btnDir_Click);
             // 
             // btnapply
             // 
@@ -388,6 +421,7 @@ namespace HomeDesignCad.Plot.Dialog
             this.Load += new System.EventHandler(this.MyPlotLoad);
             this.Resize += new System.EventHandler(this.FormResized);
             this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
             this.groupBox3.ResumeLayout(false);
@@ -401,6 +435,24 @@ namespace HomeDesignCad.Plot.Dialog
 		#endregion
 		void MyPlotLoad(object sender, System.EventArgs e)
 		{
+            PdfUtil.Init();
+
+            string projtype = PdfUtil.getEngineering();
+
+            if (projtype != "")
+                this.cmbprogtype.Text = projtype;
+            string projname = PdfUtil.getProject();
+            if (projname != "")
+                this.tbprogname.Text = projname;
+
+            string plotdir = PdfUtil.getPlotDir();
+            if (plotdir != "")
+            {
+                this.tbplotdir.Text = plotdir;
+                this.btnPickdrawing.Enabled = true;
+                this.PlotBtn.Enabled = true;
+            }
+
             //string tempStr;
             //bool tempTest = false;
             //PlotConfigInfoCollection PCIC = PCM.Devices;
@@ -444,6 +496,7 @@ namespace HomeDesignCad.Plot.Dialog
             //    ScaleComboBox.Text = GlbScale;
             //}
             //else ScaleComboBox.Text = ScaleComboBox.Items[0].ToString();
+
 		}
 		
 		public string FormatStandardScale (string str) {
@@ -492,6 +545,8 @@ namespace HomeDesignCad.Plot.Dialog
 		
 		void PlotBtnClick(object sender, System.EventArgs e)
 		{
+
+
 			//DrawingListView.Sort();			GlbDeviceName = PlotterComboBox.Text;
 		//	GlbPaper = PaperComboBox.Text;
 			//GlbctbFile = ctbFileComboBox.Text;
@@ -502,6 +557,13 @@ namespace HomeDesignCad.Plot.Dialog
             //    Log4NetHelper.WriteInfoLog(lvic[i].Tag+"\n");
             //    PlotObjectsArray[i] = lvic[i].Tag as HdCadPlotParams;
             //}
+            if(cmbprogtype.Text!="")
+            PdfUtil.setEngineering(cmbprogtype.Text);
+            if (tbprogname.Text != "")
+            PdfUtil.setProject(tbprogname.Text);
+            if (tbplotdir.Text != "")
+            PdfUtil.setPlotDir(tbplotdir.Text);
+            PdfUtil.writeIniData();
 			this.Close();
 		}
 		
@@ -659,13 +721,13 @@ Db.OpenMode.ForRead) as Db.Layout;
                         PltSetVald.RefreshLists(PltSet);
 
 
-                        //StringCollection sl = PltSetVald.GetCanonicalMediaNameList(PltSet);
+                        StringCollection sl = PltSetVald.GetCanonicalMediaNameList(PltSet);
 
-                        //foreach (string s in sl)
-                        //{
-                        //    Log4NetHelper.WriteInfoLog("开始准备打印参数"+s+"\n");
+                        foreach (string s in sl)
+                       {
+                            Log4NetHelper.WriteInfoLog("开始准备打印参数"+s+"\n");
                            
-                        //}
+                       }
 
                         PltSetVald.SetPlotConfigurationName(PltSet, PltParams.Device, PltParams.CanonicalPaper);
 
@@ -784,8 +846,13 @@ Db.OpenMode.ForRead) as Db.Layout;
 				Document tempDoc = null;
                 Log4NetHelper.WriteInfoLog("11111111111111111111111111\n");
 				DocumentCollection DocCol = cad.DocumentManager;
+                int pii = 0;
+                Editor ed = GetActiveDoc().Editor;
+
 				foreach (HdCadPlotParams mpp in PlotObjectsArray) {
                     Log4NetHelper.WriteInfoLog("222222222222222222222222222\n");
+                    if (mpp.IsFindPaper == true)
+                        pii = pii + 1;
 					if (mpp != null) {
 						try {
                             Log4NetHelper.WriteInfoLog("33333333333333333333333\n");
@@ -845,6 +912,9 @@ Db.OpenMode.ForRead) as Db.Layout;
 						}
 					}
 				}
+
+                ed.WriteMessage("共打印了"+pii+"份pdf文件.\n");
+
 			}
 			try {
 				//Array.Clear(ScaleValueArray, 0, ScaleValueArray.Length);
@@ -1079,6 +1149,8 @@ Db.OpenMode.ForRead) as Db.Layout;
             {
                 this.tbdrawingname.Text = avalue;
 
+
+                
                 spdfname.Append("-");
                 spdfname.Append(avalue);
             }
@@ -1091,6 +1163,8 @@ Db.OpenMode.ForRead) as Db.Layout;
 
             AddTreePdf(spdfname.ToString());
             pdfname = spdfname.ToString();
+
+            PdfUtil.addPdfAttribDict(spdfname.ToString(), avalue);
             return isfind;
            // return spdfname.ToString();
         }
@@ -1111,7 +1185,7 @@ Db.OpenMode.ForRead) as Db.Layout;
 
             Database db = GetCurrentDb(doc);
 
-            SysUtil.clearPdfDict();
+            PdfUtil.clearPdfDict();
 
             string avalue = null;
             double pscale = 1;
@@ -1268,10 +1342,10 @@ Db.OpenMode.ForRead) as Db.Layout;
                             {
                                 Log4NetHelper.WriteInfoLog("图框旋转了！！！\n");
                                 PlotObjectsArray[ppi - 1].IsRotate = true;
-                                isfind = SysUtil.getIPaperParamsR(br.Name, out paperparams);
+                                isfind = PdfUtil.getIPaperParamsR(br.Name, out paperparams);
                             }
                             else
-                                isfind = SysUtil.getIPaperParams(br.Name, out paperparams);
+                                isfind = PdfUtil.getIPaperParams(br.Name, out paperparams);
                             Log4NetHelper.WriteInfoLog("图框的旋转角度是" + br.Rotation + "\n");
 
                             
@@ -1293,7 +1367,7 @@ Db.OpenMode.ForRead) as Db.Layout;
                             Log4NetHelper.WriteInfoLog("纸张定义是："+ PlotObjectsArray[ppi - 1].CanonicalPaper + "\n");
                             //PlotObjectsArray[ppi - 1].PlotFileLocation = Convert.ToString(ppi + ".pdf");
                             if(GetPdfname(br, out pdfname, tr)==true)
-                            PlotObjectsArray[ppi - 1].PlotFileLocation = pdfname;
+                            PlotObjectsArray[ppi - 1].PlotFileLocation = tbplotdir.Text +"\\"+ pdfname;
                             else
                             {
                                 Log4NetHelper.WriteInfoLog("没有001属性.\n");
@@ -1309,7 +1383,7 @@ Db.OpenMode.ForRead) as Db.Layout;
                               }
                               else
                                   Log4NetHelper.WriteInfoLog("没有比例属性.\n");
-                            SysUtil.addPdfDict(ppi - 1, PlotObjectsArray[ppi - 1].PlotFileLocation);
+                            PdfUtil.addPdfDict(ppi - 1, PlotObjectsArray[ppi - 1].PlotFileLocation);
                            
                            // PlotObjectsArray[ii - 1] = hacadpp;
                            // Log4NetHelper.WriteInfoLog(br.BlockName + "\n");
@@ -1380,16 +1454,18 @@ Db.OpenMode.ForRead) as Db.Layout;
             {
                 tvpapers.SelectedNode = e.Node;
                 this.tbpdfname.Text = tvpapers.SelectedNode.Text;
+                this.tbdrawingname.Text = PdfUtil.getDrawingname(tbpdfname.Text);
+
             }
         }
 
         private void btnapply_Click(object sender, EventArgs e)
         {
-            int keyidx = SysUtil.getidxbypdf(tvpapers.SelectedNode.Text);
+            int keyidx = PdfUtil.getidxbypdf(tvpapers.SelectedNode.Text);
 
             if (keyidx != -1)
             {
-                PlotObjectsArray[keyidx].PlotFileLocation = tbpdfname.Text;
+                PlotObjectsArray[keyidx].PlotFileLocation =tbplotdir + "\\" + tbpdfname.Text;
                 tvpapers.SelectedNode.Text = tbpdfname.Text;
                 Log4NetHelper.WriteInfoLog("正确修改好pdf名称\n");
             }
@@ -1399,6 +1475,38 @@ Db.OpenMode.ForRead) as Db.Layout;
                 Log4NetHelper.WriteErrorLog("需要选中左边的树节点\n");
             }
             
+        }
+
+        private void btnDir_Click(object sender, EventArgs e)
+        {
+            //Sys.OpenFileDialog dirdlg = new Sys.OpenFileDialog();
+            //if (dirdlg.ShowDialog == DialogResult.OK)
+            //{ 
+            //    tbplotdir.Text = dirdlg
+            //}
+            this.folderPlotDlg.Description = "请选择打印Pdf的保存目录";
+            if (folderPlotDlg.ShowDialog() == DialogResult.OK)
+            {
+                this.tbplotdir.Text = folderPlotDlg.SelectedPath;
+                this.btnPickdrawing.Enabled = true;
+                this.PlotBtn.Enabled = true;
+
+            }
+        }
+
+        private void tbplotdir_ModifiedChanged(object sender, EventArgs e)
+        {
+            if (tbplotdir.Text != "")
+            {
+                this.btnPickdrawing.Enabled = true;
+                this.PlotBtn.Enabled = true;
+            }
+
+        }
+
+        private void tbplotdir_TextChanged(object sender, EventArgs e)
+        {
+
         }
 		
 	}

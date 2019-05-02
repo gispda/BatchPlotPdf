@@ -1,14 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using IniParser;
+using IniParser.Model;
+
 
 namespace HomeDesignCad.Plot.Util
 {
-    class SysUtil
+    class PdfUtil
     {
         private static Dictionary<string, string> dict = new Dictionary<string, string>();
         private static Dictionary<string, string> rdict = new Dictionary<string, string>();
+
+        private static Dictionary<string, string> pdfattribdict = new Dictionary<string, string>();
         private static Dictionary<int, string> pdfdict = new Dictionary<int, string>();
+
+        private static IniData parsedData;
+        private static FileIniDataParser fileIniData;
         public static string getCfgPath()
         {
             string sPath = Environment.GetEnvironmentVariable("BATCHPLOTPDF");
@@ -16,16 +24,38 @@ namespace HomeDesignCad.Plot.Util
                 sPath = "F:\\project\\BatchPlotPdf\\BatchPlotPdf\\Util\\";
             return sPath;
         }
-        public static void buildDict()
+        public static void Init()
         {
-            rdict.Add("A0", "ISO_full_bleed_A0_(841.00_x_1189.00_MM)");
+            if (dict.Count > 0 && rdict.Count >0)
+                return;
+
+            dict.Add("A0", "UserDefinedMetric (1189.00 x 841.00毫米)");
+            dict.Add("A01", "UserDefinedMetric (1486.00 x 841.00毫米)");
+            dict.Add("A02", "UserDefinedMetric (1784.00 x 841.00毫米)");
+            dict.Add("A03", "UserDefinedMetric (2081.00 x 841.00毫米)");
+            dict.Add("A04", "UserDefinedMetric (2378.00 x 841.00毫米)");
+
+            dict.Add("A1", "ISO_full_bleed_A1_(594.00_x_841.00_MM)");
+            dict.Add("A11", "UserDefinedMetric (1051.00 x 594.00毫米)");
+            dict.Add("A12", "UserDefinedMetric (1262.00 x 594.00毫米)");
+            dict.Add("A13", "UserDefinedMetric (1472.00 x 594.00毫米)");
+            dict.Add("A14", "UserDefinedMetric (1682.00 x 594.00毫米)");
+            dict.Add("A2", "ISO_full_bleed_A2_(420.00_x_594.00_MM)");
+            dict.Add("A21", "UserDefinedMetric (743.00 x 420.00毫米)");
+            dict.Add("A22", "UserDefinedMetric (891.00 x 420.00毫米)");
+            dict.Add("A23", "UserDefinedMetric (1040.00 x 420.00毫米)");
+            dict.Add("A24", "UserDefinedMetric (1188.00 x 420.00毫米)");
+
+
+
+            rdict.Add("A0", "ISO_A0_(841.00_x_1189.00_MM)");
             rdict.Add("A01", "UserDefinedMetric (841.00 x 1486.00毫米)");
             rdict.Add("A02", "UserDefinedMetric (841.00 x 1784.00毫米)");
             rdict.Add("A03", "UserDefinedMetric (841.00 x 2081.00毫米)");
             rdict.Add("A04", "UserDefinedMetric (841.00 x 2378.00毫米)");
-          
 
-            rdict.Add("A1", "ISO_full_bleed_Al_(841.00_x_594.00_MM)");
+
+            rdict.Add("A1", "ISO_full_bleed_A1_(841.00_x_594.00_MM)");
             rdict.Add("A11", "UserDefinedMetric (594.00 x 1051.00毫米)");
             rdict.Add("A12", "UserDefinedMetric (594.00 x 1262.00毫米)");
             rdict.Add("A13", "UserDefinedMetric (594.00 x 1472.00毫米)");
@@ -37,22 +67,17 @@ namespace HomeDesignCad.Plot.Util
             rdict.Add("A23", "UserDefinedMetric (420.00 x 1040.00毫米)");
             rdict.Add("A24", "UserDefinedMetric (420.00 x 1188.00毫米)");
 
-            dict.Add("A0", "ISO_full_bleed_A0_(1189.00_x_841.00_MM)");
-            dict.Add("A01", "UserDefinedMetric (1486.00 x 841.00毫米)");
-            dict.Add("A02", "UserDefinedMetric (1784.00 x 841.00毫米)");
-            dict.Add("A03", "UserDefinedMetric (2081.00 x 841.00毫米)");
-            dict.Add("A04", "UserDefinedMetric (2378.00 x 841.00毫米)");
+            fileIniData = new FileIniDataParser();
+            fileIniData.Parser.Configuration.CommentString = "#";
+            parsedData = fileIniData.ReadFile("BatchPlotPdf.ini");
+        }
 
-            dict.Add("A1", "ISO_full_bleed_Al_(594.00_x_841.00_MM)");
-            dict.Add("A11", "UserDefinedMetric (1051.00 x 594.00毫米)");
-            dict.Add("A12", "UserDefinedMetric (1262.00 x 594.00毫米)");
-            dict.Add("A13", "UserDefinedMetric (1472.00 x 594.00毫米)");
-            dict.Add("A14", "UserDefinedMetric (1682.00 x 594.00毫米)");
-            dict.Add("A2", "ISO_full_bleed_A2_(420.00_x_594.00_MM)");
-            dict.Add("A21", "UserDefinedMetric (743.00 x 420.00毫米)");
-            dict.Add("A22", "UserDefinedMetric (891.00 x 420.00毫米)");
-            dict.Add("A23", "UserDefinedMetric (1040.00 x 420.00毫米)");
-            dict.Add("A24", "UserDefinedMetric (1188.00 x 420.00毫米)");
+        public static void addPdfAttribDict(string fnode, string drawname)
+        {
+            if (drawname != null || fnode != null)
+                pdfattribdict.Add(fnode, drawname);
+            else
+                Log4NetHelper.WriteErrorLog("出错了" + fnode + "\n");
 
         }
 
@@ -63,6 +88,37 @@ namespace HomeDesignCad.Plot.Util
             else
                 Log4NetHelper.WriteErrorLog("出错了"+pdfname+"\n");
          
+        }
+        public static void writeIniData()
+        {
+
+            fileIniData.WriteFile("BatchPlotPdf.ini", parsedData, Encoding.UTF8);
+        }
+        public static void setEngineering(string eng)
+        {
+            parsedData["Data"]["Engineering"]=eng;
+        }
+
+        public static void setPlotDir(string pdir)
+        {
+            parsedData["Data"]["PlotDir"] = pdir;
+        }
+        public static string getPlotDir()
+        {
+            return parsedData["Data"]["PlotDir"];
+        }
+
+        public static void setProject(string proj)
+        {
+            parsedData["Data"]["Project"] = proj;
+        }
+        public static string getEngineering()
+        {
+            return parsedData["Data"]["Engineering"];
+        }
+        public static string getProject()
+        {
+            return parsedData["Data"]["Project"];
         }
         public static string getpdfbyidx(int idx)
         {
@@ -87,16 +143,23 @@ namespace HomeDesignCad.Plot.Util
             return keyidx;
         }
 
+        public static string getDrawingname(string pdfname)
+        {
+            return pdfattribdict[pdfname];
+        }
+
+
         public static void clearPdfDict()
         {
             pdfdict.Clear();
+            pdfattribdict.Clear();
         }
 
         public static bool getIPaperParams(string bkname,out string paperparams)
         {
             bool isfind = false;
-            if (dict.Count == 0)
-                buildDict();
+         
+                Init();
 
 
             try
@@ -120,8 +183,8 @@ namespace HomeDesignCad.Plot.Util
         public static bool getIPaperParamsR(string bkname, out string paperparams)
         {
             bool isfind = false;
-            if (rdict.Count == 0)
-                buildDict();
+            
+                Init();
 
 
             try
