@@ -806,30 +806,35 @@ Db.OpenMode.ForRead) as Db.Layout;
             Db.Extents2d extents;
 
             double xmin, ymin, xmax, ymax;
-            double xplus, yplus;
+            double xpmin, ypmin;
+            double xpmax, ypmax;
             xmin = PltParams.MinPt.X;
             ymin = PltParams.MinPt.Y;
             xmax = PltParams.MaxPt.X;
             ymax = PltParams.MaxPt.Y;
 
-
+            xpmax = 0;
+            ypmax = 0;
             if (PltParams.IsRotate == true)
             {
-                xplus = (xmax - xmin) / (50 * PltParams.PaperScale);
-                yplus = (ymax - ymin) / (100 * PltParams.PaperScale);
+                xpmin = (xmax - xmin) / (50 * PltParams.PaperScale);
+                ypmin = (ymax - ymin) / (100 * PltParams.PaperScale);
             }
             else
             {
-                xplus = (xmax - xmin) / (70 * PltParams.PaperScale);
-                yplus = (ymax - ymin) / (50 * PltParams.PaperScale);
+                xpmin = (xmax - xmin) / (70 * PltParams.PaperScale);
+                ypmin = (ymax - ymin) / (50 * PltParams.PaperScale);
             
             }
 
+            xpmax = 0.5 * xpmin;
+            ypmax = 0.5 * ypmin;
+
             extents = new Db.Extents2d(
-                            xmin-xplus,
-                            ymin-yplus,
-                            xmax,
-                            ymax
+                            xmin-xpmin,
+                            ymin-ypmin,
+                            xmax-xpmax,
+                            ymax-ypmax
                           );
             return extents;
         }
