@@ -35,12 +35,12 @@ namespace HomeDesignCad.Plot.Util
             dict.Add("A03", "UserDefinedMetric (2081.00 x 841.00毫米)");
             dict.Add("A04", "UserDefinedMetric (2378.00 x 841.00毫米)");
 
-            dict.Add("A1", "ISO_full_bleed_A1_(594.00_x_841.00_MM)");
+            dict.Add("A1", "ISO_full_bleed_A1_(841.00_x_594.00_MM)");
             dict.Add("A11", "UserDefinedMetric (1051.00 x 594.00毫米)");
             dict.Add("A12", "UserDefinedMetric (1262.00 x 594.00毫米)");
             dict.Add("A13", "UserDefinedMetric (1472.00 x 594.00毫米)");
             dict.Add("A14", "UserDefinedMetric (1682.00 x 594.00毫米)");
-            dict.Add("A2", "ISO_full_bleed_A2_(420.00_x_594.00_MM)");
+            dict.Add("A2", "ISO_full_bleed_A2_(594.00_x_420.00_MM)");
             dict.Add("A21", "UserDefinedMetric (743.00 x 420.00毫米)");
             dict.Add("A22", "UserDefinedMetric (891.00 x 420.00毫米)");
             dict.Add("A23", "UserDefinedMetric (1040.00 x 420.00毫米)");
@@ -54,14 +54,13 @@ namespace HomeDesignCad.Plot.Util
             rdict.Add("A03", "UserDefinedMetric (841.00 x 2081.00毫米)");
             rdict.Add("A04", "UserDefinedMetric (841.00 x 2378.00毫米)");
 
-
-            rdict.Add("A1", "ISO_full_bleed_A1_(841.00_x_594.00_MM)");
+            rdict.Add("A1", "ISO_full_bleed_A1_(594.00_x_841.00_MM)");
+            
             rdict.Add("A11", "UserDefinedMetric (594.00 x 1051.00毫米)");
             rdict.Add("A12", "UserDefinedMetric (594.00 x 1262.00毫米)");
             rdict.Add("A13", "UserDefinedMetric (594.00 x 1472.00毫米)");
             rdict.Add("A14", "UserDefinedMetric (594.00 x 1682.00毫米)");
-
-            rdict.Add("A2", "ISO_full_bleed_A2_(594.00_x_420.00_MM)");
+            rdict.Add("A2", "ISO_full_bleed_A2_(420.00_x_594.00_MM)");   
             rdict.Add("A21", "UserDefinedMetric (420.00 x 743.00毫米)");
             rdict.Add("A22", "UserDefinedMetric (420.00 x 891.00毫米)");
             rdict.Add("A23", "UserDefinedMetric (420.00 x 1040.00毫米)");
