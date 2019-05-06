@@ -68,6 +68,7 @@ namespace HomeDesignCad.Plot.Dialog
         private Button btnDir;
         private TextBox tbplotdir;
         private FolderBrowserDialog folderPlotDlg;
+        private string oldpdfname;
   
 		private string PlotDate = DateTime.Now.Date.ToShortDateString();
 		public BatchPlotForm()
@@ -336,6 +337,8 @@ namespace HomeDesignCad.Plot.Dialog
             this.tbpdfname.Name = "tbpdfname";
             this.tbpdfname.Size = new System.Drawing.Size(454, 21);
             this.tbpdfname.TabIndex = 0;
+            this.tbpdfname.Click += new System.EventHandler(this.tbpdfname_Click);
+            this.tbpdfname.TextChanged += new System.EventHandler(this.tbpdfname_TextChanged);
             // 
             // groupBox3
             // 
@@ -1470,23 +1473,29 @@ Db.OpenMode.ForRead) as Db.Layout;
             int keyidx = -1;
             try
             {
-                keyidx = PdfUtil.getidxbypdf(tvpapers.SelectedNode.Text);
+                if (oldpdfname == null)
+                {
+                    MessageBox.Show("没有修改文件名.");
+                    Log4NetHelper.WriteErrorLog("没有修改文件名\n");
+                }
+
+                keyidx = PdfUtil.getidxbypdf(this.oldpdfname);
 
                 if (keyidx != -1)
                 {
-                    PlotObjectsArray[keyidx].PlotFileLocation = tbplotdir + "\\" + tbpdfname.Text;
+                    PlotObjectsArray[keyidx].PlotFileLocation = tbplotdir.Text + "\\" + tbpdfname.Text;
                     tvpapers.SelectedNode.Text = tbpdfname.Text;
                     Log4NetHelper.WriteInfoLog("正确修改好pdf名称\n");
                 }
                 else
                 {
-                    MessageBox.Show("需要选中左边的树节点.");
-                    Log4NetHelper.WriteErrorLog("需要选中左边的树节点\n");
+                   // MessageBox.Show("需要选中左边的树节点.");
+                    Log4NetHelper.WriteErrorLog("有错误，没有修改成功\n");
                 }
             }
             catch (Autodesk.AutoCAD.Runtime.Exception ex)
             {
-                MessageBox.Show("需要选中左边的树节点.");
+               // MessageBox.Show("需要选中左边的树节点.");
                 Log4NetHelper.WriteErrorLog("需要选中左边的树节点\n");
             
             }
@@ -1523,6 +1532,16 @@ Db.OpenMode.ForRead) as Db.Layout;
         private void tbplotdir_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void tbpdfname_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tbpdfname_Click(object sender, EventArgs e)
+        {
+            this.oldpdfname = tbpdfname.Text;
         }
 		
 	}

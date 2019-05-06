@@ -133,7 +133,7 @@ namespace HomeDesignCad.Plot.Util
             int keyidx = -1;
             foreach (int key in pdfdict.Keys)
             {
-                if (pdfdict[key].Equals(pdfname))
+                if (pdfdict[key].Contains(pdfname))
                 {
                     //...... key
                     keyidx = key;
