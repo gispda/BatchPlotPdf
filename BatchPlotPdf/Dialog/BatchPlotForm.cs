@@ -1466,18 +1466,29 @@ Db.OpenMode.ForRead) as Db.Layout;
 
         private void btnapply_Click(object sender, EventArgs e)
         {
-            int keyidx = PdfUtil.getidxbypdf(tvpapers.SelectedNode.Text);
 
-            if (keyidx != -1)
+            int keyidx = -1;
+            try
             {
-                PlotObjectsArray[keyidx].PlotFileLocation =tbplotdir + "\\" + tbpdfname.Text;
-                tvpapers.SelectedNode.Text = tbpdfname.Text;
-                Log4NetHelper.WriteInfoLog("正确修改好pdf名称\n");
+                keyidx = PdfUtil.getidxbypdf(tvpapers.SelectedNode.Text);
+
+                if (keyidx != -1)
+                {
+                    PlotObjectsArray[keyidx].PlotFileLocation = tbplotdir + "\\" + tbpdfname.Text;
+                    tvpapers.SelectedNode.Text = tbpdfname.Text;
+                    Log4NetHelper.WriteInfoLog("正确修改好pdf名称\n");
+                }
+                else
+                {
+                    MessageBox.Show("需要选中左边的树节点.");
+                    Log4NetHelper.WriteErrorLog("需要选中左边的树节点\n");
+                }
             }
-            else
+            catch (Autodesk.AutoCAD.Runtime.Exception ex)
             {
                 MessageBox.Show("需要选中左边的树节点.");
                 Log4NetHelper.WriteErrorLog("需要选中左边的树节点\n");
+            
             }
             
         }
