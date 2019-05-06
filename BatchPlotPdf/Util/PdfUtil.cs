@@ -93,6 +93,61 @@ namespace HomeDesignCad.Plot.Util
 
             fileIniData.WriteFile("BatchPlotPdf.ini", parsedData, Encoding.UTF8);
         }
+        public static void setXs(int xs)
+        {
+            string sxs = Convert.ToString(xs);
+
+            parsedData["Plot"]["Xs"]=sxs;
+        }
+        public static void setYs(int ys)
+        {
+            string sys = Convert.ToString(ys);
+
+            parsedData["Plot"]["Ys"] = sys;
+        }
+        public static void setRxs(int xs)
+        {
+            string sxs = Convert.ToString(xs);
+
+            parsedData["Plot"]["Rxs"] = sxs;
+        }
+        public static void setRys(int ys)
+        {
+            string sys = Convert.ToString(ys);
+
+            parsedData["Plot"]["Rys"] = sys;
+        }
+        public static void setSmax(double smax)
+        {
+            string sys = Convert.ToString(smax);
+
+            parsedData["Plot"]["Smax"] = sys;
+        }
+        public static int getXs()
+        {
+            string sxs = parsedData["Plot"]["Xs"];
+            return Convert.ToInt32(sxs);
+        }
+        public static int getYs()
+        {
+            string sys = parsedData["Plot"]["Ys"];
+            return Convert.ToInt32(sys);
+        }
+        public static int getRxs()
+        {
+            string srxs = parsedData["Plot"]["Rxs"];
+            return Convert.ToInt32(srxs);
+        }
+        public static int getRys()
+        {
+            string srys = parsedData["Plot"]["Rys"];
+            return Convert.ToInt32(srys);
+        }
+        public static double getSmax()
+        {
+            string sxs = parsedData["Plot"]["Smax"];
+            return Convert.ToDouble(sxs);
+        }
         public static void setEngineering(string eng)
         {
             parsedData["Data"]["Engineering"]=eng;
@@ -115,6 +170,8 @@ namespace HomeDesignCad.Plot.Util
         {
             return parsedData["Data"]["Engineering"];
         }
+
+
         public static string getProject()
         {
             return parsedData["Data"]["Project"];
