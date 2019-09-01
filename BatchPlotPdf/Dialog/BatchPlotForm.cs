@@ -1333,6 +1333,7 @@ Db.OpenMode.ForRead) as Db.Layout;
                 //Circid = btr.AppendEntity(pcirc)
                 //tm.AddNewlyCreatedDBObject(pcirc, True)
                         string pdfname = null;
+                        Point3d maxpt;
                         foreach (SelectedObject obj in aset)
                         {
 
@@ -1367,11 +1368,17 @@ Db.OpenMode.ForRead) as Db.Layout;
                               
                             //}
                             extents = br.GeometryExtentsBestFit();
+                            
 
                              PlotObjectsArray[ppi - 1].MinPt = extents.MinPoint;
-                             PlotObjectsArray[ppi - 1].MaxPt = extents.MaxPoint;
+                             maxpt = new Point3d(br.Position.X, extents.MaxPoint.Y, extents.MaxPoint.Z);
 
-                            
+                             PlotObjectsArray[ppi - 1].MaxPt = maxpt;
+                             //PlotObjectsArray[ppi - 1].MaxPt.X = br.Position.X;
+
+                            // double xx = br.Position.X;
+                            // /double yy = br.Position.Y;
+
 
                             Log4NetHelper.WriteInfoLog("333333333333333333333333sfsdfdsfsfds\n");
                             PlotObjectsArray[ppi - 1].Device = "DWG To PDF.pc3";
