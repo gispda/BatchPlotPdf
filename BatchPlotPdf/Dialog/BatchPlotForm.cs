@@ -479,14 +479,14 @@ namespace HomeDesignCad.Plot.Dialog
                 ys = 100;
                 rxs = 70;
                 rys = 50;
-                symax = 0.1;
-                sxmax = 0.3;
+                symax = 0.05;
+                sxmax = 0;
                 PdfUtil.setXs(50);
                 PdfUtil.setYs(100);
                 PdfUtil.setRxs(70);
                 PdfUtil.setRys(50);
-                PdfUtil.setSmaxy(0.1);
-                PdfUtil.setSmaxx(0.3);
+                PdfUtil.setSmaxy(0.05);
+                PdfUtil.setSmaxx(0);
             }
             //string tempStr;
             //bool tempTest = false;
