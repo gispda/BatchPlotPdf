@@ -68,6 +68,10 @@ namespace HomeDesignCad.Plot.Util
 
             fileIniData = new FileIniDataParser();
             fileIniData.Parser.Configuration.CommentString = "#";
+
+            string ddd = System.Environment.CurrentDirectory;
+            string eee = System.IO.Directory.GetCurrentDirectory();
+
             parsedData = fileIniData.ReadFile("BatchPlotPdf.ini");
         }
 
@@ -117,11 +121,17 @@ namespace HomeDesignCad.Plot.Util
 
             parsedData["Plot"]["Rys"] = sys;
         }
-        public static void setSmax(double smax)
+        public static void setSmaxy(double smaxy)
         {
-            string sys = Convert.ToString(smax);
+            string sys = Convert.ToString(smaxy);
 
-            parsedData["Plot"]["Smax"] = sys;
+            parsedData["Plot"]["Smaxy"] = sys;
+        }
+        public static void setSmaxx(double smaxx)
+        {
+            string sxs = Convert.ToString(smaxx);
+
+            parsedData["Plot"]["Smaxx"] = sxs;
         }
         public static int getXs()
         {
@@ -143,11 +153,17 @@ namespace HomeDesignCad.Plot.Util
             string srys = parsedData["Plot"]["Rys"];
             return Convert.ToInt32(srys);
         }
-        public static double getSmax()
+        public static double getSmaxy()
         {
-            string sxs = parsedData["Plot"]["Smax"];
+            string sys = parsedData["Plot"]["Smaxy"];
+            return Convert.ToDouble(sys);
+        }
+        public static double getSmaxx()
+        {
+            string sxs = parsedData["Plot"]["Smaxx"];
             return Convert.ToDouble(sxs);
         }
+
         public static void setEngineering(string eng)
         {
             parsedData["Data"]["Engineering"]=eng;

@@ -70,11 +70,13 @@ namespace HomeDesignCad.Plot.Dialog
         private FolderBrowserDialog folderPlotDlg;
         private string oldpdfname;
 
-        private int xs;
-        private int ys;
-        private int rxs;
-        private int rys;
-        private double smax;
+        private static int xs;
+        private static int ys;
+        private static int rxs;
+        private static int rys;
+        private static double symax;
+        private static double sxmax;
+
   
 		private string PlotDate = DateTime.Now.Date.ToShortDateString();
 		public BatchPlotForm()
@@ -463,24 +465,28 @@ namespace HomeDesignCad.Plot.Dialog
             }
             try
             {
-                this.xs = PdfUtil.getXs();
-                this.ys = PdfUtil.getYs();
-                this.rxs = PdfUtil.getRxs();
-                this.rys = PdfUtil.getRys();
-                this.smax = PdfUtil.getSmax();
+                xs = PdfUtil.getXs();
+                ys = PdfUtil.getYs();
+                rxs = PdfUtil.getRxs();
+                rys = PdfUtil.getRys();
+                symax = PdfUtil.getSmaxy();
+                sxmax = PdfUtil.getSmaxx();
+
             }
             catch (Autodesk.AutoCAD.Runtime.Exception ex)
             {
-                this.xs = 50;
-                this.ys = 100;
-                this.rxs = 70;
-                this.rys = 50;
-                this.smax = 0.3;
+                xs = 50;
+                ys = 100;
+                rxs = 70;
+                rys = 50;
+                symax = 0.1;
+                sxmax = 0.3;
                 PdfUtil.setXs(50);
                 PdfUtil.setYs(100);
                 PdfUtil.setRxs(70);
                 PdfUtil.setRys(50);
-                PdfUtil.setSmax(0.3);
+                PdfUtil.setSmaxy(0.1);
+                PdfUtil.setSmaxx(0.3);
             }
             //string tempStr;
             //bool tempTest = false;
@@ -856,8 +862,8 @@ Db.OpenMode.ForRead) as Db.Layout;
             
             }
 
-            xpmax = smax * xpmin;
-            ypmax = smax * ypmin;
+            xpmax = sxmax * xpmin;
+            ypmax = symax * ypmin;
 
             extents = new Db.Extents2d(
                             xmin-xpmin,
