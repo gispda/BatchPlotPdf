@@ -72,7 +72,21 @@ namespace HomeDesignCad.Plot.Util
             string ddd = System.Environment.CurrentDirectory;
             string eee = System.IO.Directory.GetCurrentDirectory();
 
-            parsedData = fileIniData.ReadFile("BatchPlotPdf.ini");
+            try
+            {
+                parsedData = fileIniData.ReadFile("BatchPlotPdf.ini");
+            }
+            catch (Exception)
+            {
+                
+                PdfUtil.setXs(50);
+                PdfUtil.setYs(100);
+                PdfUtil.setRxs(70);
+                PdfUtil.setRys(50);
+                PdfUtil.setSmaxy(0.05);
+                PdfUtil.setSmaxx(0);
+            }
+            
         }
 
         public static void addPdfAttribDict(string fnode, string drawname)
