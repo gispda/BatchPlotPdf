@@ -21,7 +21,7 @@ namespace HomeDesignCad.Plot.Util
         {
             string sPath = Environment.GetEnvironmentVariable("BATCHPLOTPDF");
             if (sPath == null || sPath == "")
-                sPath = "F:\\project\\BatchPlotPdf\\BatchPlotPdf\\Util\\";
+                sPath = "C:\\Program Files (x86)\\BatchPlotPdf";
             return sPath;
         }
         public static void Init()
@@ -74,7 +74,7 @@ namespace HomeDesignCad.Plot.Util
 
             try
             {
-                parsedData = fileIniData.ReadFile("BatchPlotPdf.ini");
+                parsedData = fileIniData.ReadFile(getCfgPath()+"\\BatchPlotPdf.ini");
             }
             catch (Exception)
             {

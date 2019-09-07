@@ -5,6 +5,12 @@
 #define MyAppVersion "1.3.5"
 #define MyAppPublisher "XuGuang, Inc."
 
+
+
+
+[Registry]
+Root: HKCU; Subkey: "Environment"; ValueType:string; ValueName: "BATCHPLOTPDF"; \
+    ValueData: {app}; Flags: uninsdeletekey
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
@@ -22,6 +28,9 @@ OutputBaseFilename=mysetup
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
+ChangesEnvironment=yes
+
+
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -29,7 +38,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 [Files]
 Source: "F:\project\BatchPlotPdf\BatchPlotPdf\bin\Debug\AcDx.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "F:\project\BatchPlotPdf\BatchPlotPdf\bin\Debug\AcMr.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "F:\project\BatchPlotPdf\BatchPlotPdf\bin\Debug\BatchPlotPdf.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "F:\project\BatchPlotPdf\BatchPlotPdf\bin\Debug\BatchPlotPdf.dll"; DestDir: "{app}"; Flags: ignoreversion;AfterInstall: MyAfterInstall
 Source: "F:\project\BatchPlotPdf\BatchPlotPdf\bin\Debug\BatchPlotPdf.ini"; DestDir: "{app}"; Flags: ignoreversion
 Source: "F:\project\BatchPlotPdf\BatchPlotPdf\bin\Debug\BatchPlotPdf.pdb"; DestDir: "{app}"; Flags: ignoreversion
 Source: "F:\project\BatchPlotPdf\BatchPlotPdf\bin\Debug\INIFileParser.dll"; DestDir: "{app}"; Flags: ignoreversion
@@ -66,6 +75,7 @@ var
   SelectAutoCADPage: TInputOptionWizardPage;
   AcadInfos: AcadInfoArray;
   RootKey: Integer;
+  PluginDll: String;
 
 // Function declarations
 function GetInstalledAutoCADVersions(): Boolean; forward;
@@ -114,6 +124,75 @@ end;
 function GetPlotStylesDir(Param: String): String;
 begin
   Result := AcadInfos[SelectAutoCADPage.SelectedValueIndex].plotDir + '\' + 'Plot Styles';
+end;
+
+function SetPlugInReg:Boolean;
+var
+  S, V, AcadRegKey, sAcadExeLocation,sRegistryKey: String;
+  I, J, iCountAcadExeLocations: Integer;
+  AcadVerNames, AcadVerKeysTemp: TArrayOfString;
+begin
+  if IsWin64 then begin
+    RootKey := HKLM64;
+  end else begin
+    RootKey := HKEY_LOCAL_MACHINE;
+  end;
+  iCountAcadExeLocations := 0;  
+  AcadRegKey := 'SOFTWARE\Autodesk\AutoCAD';
+  if RegGetSubkeyNames(RootKey, AcadRegKey, AcadVerNames) then
+  begin
+    S := '';
+    for I := 0 to GetArrayLength(AcadVerNames) - 1 do
+    begin
+      //MsgBox(AcadRegKey + '\' + AcadVerNames[I], mbInformation, MB_OK);
+      if RegGetSubkeyNames(RootKey, AcadRegKey + '\' + AcadVerNames[I], AcadVerKeysTemp) then
+      begin
+        for J := 0 to GetArrayLength(AcadVerKeysTemp)-1 do
+        begin
+          //SOFTWARE\Autodesk\AutoCAD\R17.2\ACAD-7000:409
+          //MsgBox(AcadRegKey + '\' + AcadVerNames[I] + '\' + AcadVerKeysTemp[J], mbInformation, MB_OK);
+          sAcadExeLocation := '';
+          sRegistryKey := AcadRegKey + '\' + AcadVerNames[I] + '\' + AcadVerKeysTemp[J];
+          if RegQueryStringValue(RootKey, AcadRegKey + '\' + AcadVerNames[I] + '\' + AcadVerKeysTemp[J], 'Location', sAcadExeLocation) then
+          begin
+
+            SetArrayLength(AcadInfos, iCountAcadExeLocations + 1);
+          
+
+ //           Edit the Windows Registry and add a folder to the following path (for example, for the DGNLSPurge Hotfix DLL for AutoCAD Civil 3D 2014):
+//HKEY_LOCAL_MACHINE\SOFTWARE\Autodesk\AutoCAD\R19.1\ACAD-D000:407\Applications\
+//Add the following keys:
+//"LOADER"="C:\\Program Files\\Autodesk\\Autodesk AutoCAD Civil 3D 2014\\DgnLsPurge.dll"
+//"DESCRIPTION"="DGN Linestyle Purge"
+//"LOADCTRLS"=dword:0000000e
+//"MANAGED"=dword:00000001
+//
+            RegWriteStringValue(RootKey, AcadRegKey + '\' + AcadVerNames[I] + '\' + AcadVerKeysTemp[J]+'\' + 'Applications\BatchPlotPdf', 'LOADER', PluginDll);
+            RegWriteStringValue(RootKey, AcadRegKey + '\' + AcadVerNames[I] + '\' + AcadVerKeysTemp[J]+'\' + 'Applications\BatchPlotPdf', 'DESCRIPTION', 'Plot to PDF');
+            RegWriteDWordValue(RootKey, AcadRegKey + '\' + AcadVerNames[I] + '\' + AcadVerKeysTemp[J]+'\' + 'Applications\BatchPlotPdf', 'LOADCTRLS', 14);
+            RegWriteDWordValue(RootKey, AcadRegKey + '\' + AcadVerNames[I] + '\' + AcadVerKeysTemp[J]+'\' + 'Applications\BatchPlotPdf', 'MANAGED', 1);
+
+//C:\Users\homeDesignCAD\AppData\Roaming\Autodesk\AutoCAD 2014\R19.1\chs\Plotters
+            
+            iCountAcadExeLocations := iCountAcadExeLocations + 1;
+          end;
+        end;
+      end;
+    end;
+    //MsgBox('Founded AutoCAD registry keys:'#13#10#13#10 + S, mbInformation, MB_OK);
+  end;
+  if iCountAcadExeLocations > 0 then begin
+    Result := True;
+  end else begin
+    Result := False;
+  end;
+end;
+
+procedure MyAfterInstall();
+begin
+  PluginDll :=  ExpandConstant('{app}') +'\' + 'BatchPlotPdf.dll';
+  SetPlugInReg();
+  //MsgBox('Just installed MyProg.exe as ' + CurrentFileName + '.', mbInformation, MB_OK);
 end;
 
 function GetInstalledAutoCADVersions(): Boolean;
@@ -168,6 +247,16 @@ begin
             if RegQueryStringValue(RootKey, AcadRegKey + '\' + AcadVerNames[I] + '\' + AcadVerKeysTemp[J], 'LangAbbrev', sLangAbbrev) then begin
               AcadInfo.langAbbrev := sLangAbbrev;
             end;
+
+ //           Edit the Windows Registry and add a folder to the following path (for example, for the DGNLSPurge Hotfix DLL for AutoCAD Civil 3D 2014):
+//HKEY_LOCAL_MACHINE\SOFTWARE\Autodesk\AutoCAD\R19.1\ACAD-D000:407\Applications\
+//Add the following keys:
+//"LOADER"="C:\\Program Files\\Autodesk\\Autodesk AutoCAD Civil 3D 2014\\DgnLsPurge.dll"
+//"DESCRIPTION"="DGN Linestyle Purge"
+//"LOADCTRLS"=dword:0000000e
+//"MANAGED"=dword:00000001
+//
+            RegWriteStringValue(RootKey, AcadRegKey + '\' + AcadVerNames[I] + '\' + AcadVerKeysTemp[J]+'\' + 'Applications', 'LOADER', sLangAbbrev);
 //C:\Users\homeDesignCAD\AppData\Roaming\Autodesk\AutoCAD 2014\R19.1\chs\Plotters
             AcadInfo.registrykey := sRegistryKey;
             AcadInfo.plotDir := 'C:\Users\' + GetUserNameString() + '\AppData\Roaming\Autodesk\' + sProductNameGlob + '\' + AcadVerNames[I] + '\' + sLangAbbrev + '\' + 'Plotters' 
