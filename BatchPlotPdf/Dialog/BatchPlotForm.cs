@@ -1367,8 +1367,15 @@ Db.OpenMode.ForRead) as Db.Layout;
                             //{
                               
                             //}
-                            extents = br.GeometryExtentsBestFit();
-                            
+
+                            try
+                            {
+                                extents = br.GeometryExtentsBestFit();
+                            }catch (Autodesk.AutoCAD.Runtime.Exception ex)
+                            {
+                                extents = br.GeometricExtents;
+                            }
+
 
                              PlotObjectsArray[ppi - 1].MinPt = extents.MinPoint;
                              maxpt = new Point3d(br.Position.X, extents.MaxPoint.Y, extents.MaxPoint.Z);
