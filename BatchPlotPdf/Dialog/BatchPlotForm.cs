@@ -162,7 +162,7 @@ namespace HomeDesignCad.Plot.Dialog
             this.PlotBtn.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.PlotBtn.Enabled = false;
             this.PlotBtn.ForeColor = System.Drawing.Color.Navy;
-            this.PlotBtn.Location = new System.Drawing.Point(566, 399);
+            this.PlotBtn.Location = new System.Drawing.Point(524, 399);
             this.PlotBtn.Name = "PlotBtn";
             this.PlotBtn.Size = new System.Drawing.Size(90, 25);
             this.PlotBtn.TabIndex = 3;
@@ -176,9 +176,9 @@ namespace HomeDesignCad.Plot.Dialog
             this.btnPickdrawing.BackColor = System.Drawing.Color.Silver;
             this.btnPickdrawing.Enabled = false;
             this.btnPickdrawing.ForeColor = System.Drawing.Color.Navy;
-            this.btnPickdrawing.Location = new System.Drawing.Point(329, 399);
+            this.btnPickdrawing.Location = new System.Drawing.Point(309, 399);
             this.btnPickdrawing.Name = "btnPickdrawing";
-            this.btnPickdrawing.Size = new System.Drawing.Size(150, 25);
+            this.btnPickdrawing.Size = new System.Drawing.Size(119, 25);
             this.btnPickdrawing.TabIndex = 10;
             this.btnPickdrawing.Text = "选择打印图";
             this.btnPickdrawing.UseVisualStyleBackColor = false;
@@ -283,8 +283,8 @@ namespace HomeDesignCad.Plot.Dialog
             // 
             this.panel1.Controls.Add(this.tbplotdir);
             this.panel1.Controls.Add(this.btnDir);
-            this.panel1.Controls.Add(this.btnapply);
             this.panel1.Controls.Add(this.groupBox4);
+            this.panel1.Controls.Add(this.btnapply);
             this.panel1.Controls.Add(this.groupBox3);
             this.panel1.Controls.Add(this.groupBox2);
             this.panel1.Controls.Add(this.groupBox1);
@@ -307,7 +307,7 @@ namespace HomeDesignCad.Plot.Dialog
             this.btnDir.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDir.BackColor = System.Drawing.Color.Silver;
             this.btnDir.ForeColor = System.Drawing.Color.Navy;
-            this.btnDir.Location = new System.Drawing.Point(28, 338);
+            this.btnDir.Location = new System.Drawing.Point(12, 338);
             this.btnDir.Name = "btnDir";
             this.btnDir.Size = new System.Drawing.Size(90, 25);
             this.btnDir.TabIndex = 12;
@@ -320,7 +320,7 @@ namespace HomeDesignCad.Plot.Dialog
             this.btnapply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnapply.BackColor = System.Drawing.Color.Silver;
             this.btnapply.ForeColor = System.Drawing.Color.Navy;
-            this.btnapply.Location = new System.Drawing.Point(28, 251);
+            this.btnapply.Location = new System.Drawing.Point(9, 261);
             this.btnapply.Name = "btnapply";
             this.btnapply.Size = new System.Drawing.Size(93, 25);
             this.btnapply.TabIndex = 11;
@@ -745,7 +745,7 @@ Db.OpenMode.ForRead) as Db.Layout;
                     //    Log4NetHelper.WriteInfoLog("开始准备打印参数555555555555555555555555\n");
                         PltSetVald.SetPlotCentered(PltSet, true);
                     //    Log4NetHelper.WriteInfoLog("开始准备打印参数666666666666666666\n");
-                        PltSetVald.SetPlotRotation(PltSet, Db.PlotRotation.Degrees000);
+                        PltSetVald.SetPlotRotation(PltSet, PltParams.RotateAngle);
                      //   Log4NetHelper.WriteInfoLog("开始准备打印参数77777777777777777\n");
                         // We'll use the standard DWF PC3, as
                         // for today we're just plotting to file
@@ -1368,19 +1368,7 @@ Db.OpenMode.ForRead) as Db.Layout;
                               
                             //}
 
-                            try
-                            {
-                                extents = br.GeometryExtentsBestFit();
-                            }catch (Autodesk.AutoCAD.Runtime.Exception ex)
-                            {
-                                extents = br.GeometricExtents;
-                            }
-
-
-                             PlotObjectsArray[ppi - 1].MinPt = extents.MinPoint;
-                             maxpt = new Point3d(br.Position.X, extents.MaxPoint.Y, extents.MaxPoint.Z);
-
-                             PlotObjectsArray[ppi - 1].MaxPt = maxpt;
+                     
                              //PlotObjectsArray[ppi - 1].MaxPt.X = br.Position.X;
 
                             // double xx = br.Position.X;
@@ -1397,14 +1385,40 @@ Db.OpenMode.ForRead) as Db.Layout;
                                 Log4NetHelper.WriteInfoLog("图框旋转了！！！\n");
                                 PlotObjectsArray[ppi - 1].IsRotate = true;
                                 isfind = PdfUtil.getIPaperParamsR(br.Name, out paperparams);
+                                PlotObjectsArray[ppi - 1].RotateAngle = PlotRotation.Degrees090;
+
                             }
                             else
                                 isfind = PdfUtil.getIPaperParams(br.Name, out paperparams);
                             Log4NetHelper.WriteInfoLog("图框的旋转角度是" + br.Rotation + "\n");
 
-                            
+                            try
+                            {
+                                extents = br.GeometryExtentsBestFit();
+                            }
+                            catch (Autodesk.AutoCAD.Runtime.Exception ex)
+                            {
+                                extents = br.GeometricExtents;
+                            }
 
-                            PlotObjectsArray[ppi - 1].CanonicalPaper = paperparams;
+
+                            PlotObjectsArray[ppi - 1].MinPt = extents.MinPoint;
+
+                            if (PlotObjectsArray[ppi - 1].IsRotate == false)
+                            {
+                                maxpt = new Point3d(br.Position.X, extents.MaxPoint.Y, extents.MaxPoint.Z);
+                                PlotObjectsArray[ppi - 1].MaxPt = maxpt;
+                            }
+                            else
+                            {
+
+                                PlotObjectsArray[ppi - 1].MaxPt = extents.MaxPoint;
+                            
+                            }
+
+
+
+                                PlotObjectsArray[ppi - 1].CanonicalPaper = paperparams;
                             Log4NetHelper.WriteInfoLog("图框纸张尺寸是"+PlotObjectsArray[ppi - 1].CanonicalPaper+"\n");
                             if (isfind == false)
                             {
@@ -1622,6 +1636,16 @@ Db.OpenMode.ForRead) as Db.Layout;
         private Point3d MaxPoints;
         private double paperScale;
         private bool isRotate;
+
+
+
+        private PlotRotation rotateAngle;
+
+        public PlotRotation RotateAngle
+        {
+            get { return rotateAngle; }
+            set { rotateAngle = value; }
+        }
 
         public bool IsRotate
         {
