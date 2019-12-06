@@ -4,7 +4,7 @@
     <ReferencePath>F:\project\AcadSdk2014;F:\project\inc-x64</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <StartProgram>C:\Program Files\Autodesk\AutoCAD 2014\acad.exe</StartProgram>
+    <StartProgram>d:\Program Files\Autodesk\AutoCAD 2014\acad.exe</StartProgram>
     <StartAction>Program</StartAction>
     <StartArguments>/nologo /b "F:\project\BatchPlotPdf\start.scr"</StartArguments>
   </PropertyGroup>

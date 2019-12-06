@@ -15,7 +15,7 @@ using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.PlottingServices;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.Windows;
-using Autodesk.AutoCAD.Interop.Common;
+//using Autodesk.AutoCAD.Interop.Common;
 
 using cad = Autodesk.AutoCAD.ApplicationServices.Application;
 using Db = Autodesk.AutoCAD.DatabaseServices;
@@ -745,7 +745,7 @@ Db.OpenMode.ForRead) as Db.Layout;
                     //    Log4NetHelper.WriteInfoLog("开始准备打印参数555555555555555555555555\n");
                         PltSetVald.SetPlotCentered(PltSet, true);
                     //    Log4NetHelper.WriteInfoLog("开始准备打印参数666666666666666666\n");
-                        PltSetVald.SetPlotRotation(PltSet, PltParams.RotateAngle);
+                        PltSetVald.SetPlotRotation(PltSet, PlotRotation.Degrees000);
                      //   Log4NetHelper.WriteInfoLog("开始准备打印参数77777777777777777\n");
                         // We'll use the standard DWF PC3, as
                         // for today we're just plotting to file
