@@ -81,10 +81,10 @@ namespace HomeDesignCad.Plot.Util
                 
                 PdfUtil.setXs(50);
                 PdfUtil.setYs(100);
-                PdfUtil.setRxs(70);
-                PdfUtil.setRys(50);
-                PdfUtil.setSmaxy(0.05);
-                PdfUtil.setSmaxx(0);
+                PdfUtil.setRxs(300);
+                PdfUtil.setRys(400);
+                PdfUtil.setSmaxy(0.1);
+                PdfUtil.setSmaxx(0.02);
             }
             
         }

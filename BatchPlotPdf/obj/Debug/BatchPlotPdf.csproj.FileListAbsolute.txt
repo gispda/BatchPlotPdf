@@ -14,4 +14,3 @@ F:\project\BatchPlotPdf\BatchPlotPdf\bin\Debug\BatchPlotPdf.ini
 F:\project\BatchPlotPdf\BatchPlotPdf\bin\Debug\INIFileParser.dll
 F:\project\BatchPlotPdf\BatchPlotPdf\bin\Debug\INIFileParser.xml
 F:\project\BatchPlotPdf\BatchPlotPdf\bin\Debug\log4net.config
-F:\project\BatchPlotPdf\BatchPlotPdf\obj\Debug\BatchPlotPdf.csprojResolveAssemblyReference.cache

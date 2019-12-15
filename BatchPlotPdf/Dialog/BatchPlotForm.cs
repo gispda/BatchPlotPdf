@@ -477,16 +477,16 @@ namespace HomeDesignCad.Plot.Dialog
             {
                 xs = 50;
                 ys = 100;
-                rxs = 70;
-                rys = 50;
-                symax = 0.05;
-                sxmax = 0;
+                rxs = 300;
+                rys = 400;
+                symax = 0.1;
+                sxmax = 0.02;
                 PdfUtil.setXs(50);
                 PdfUtil.setYs(100);
                 PdfUtil.setRxs(70);
                 PdfUtil.setRys(50);
-                PdfUtil.setSmaxy(0.05);
-                PdfUtil.setSmaxx(0);
+                PdfUtil.setSmaxy(0.1);
+                PdfUtil.setSmaxx(0.02);
             }
             //string tempStr;
             //bool tempTest = false;
@@ -868,8 +868,8 @@ Db.OpenMode.ForRead) as Db.Layout;
             extents = new Db.Extents2d(
                             xmin-xpmin,
                             ymin-ypmin,
-                            xmax-xpmax,
-                            ymax-ypmax
+                            xmax+xpmax,
+                            ymax+ypmax
                           );
             return extents;
         }
